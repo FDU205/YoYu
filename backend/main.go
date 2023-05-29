@@ -3,6 +3,7 @@ package main
 import (
 	"YOYU/backend/database"
 	"YOYU/backend/users"
+	"YOYU/backend/wall"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -21,6 +22,7 @@ func main() {
 
 	v1 := r.Group("/api")
 	users.UsersRegister(v1.Group("/user"))
+	wall.WallRegister(v1.Group("/wall"))
 
 	r.Run("127.0.0.1:8080")
 }
