@@ -9,7 +9,7 @@ import (
 
 // validator 在验证用户后把对应的数据模型填好
 type WallValidator struct {
-	Poster_id  uint   `json:"poster_id" binding:"required"`
+	PosterID   uint   `json:"userID" binding:"required"`
 	Content    string `json:"content" binding:"required"`
 	Visibility uint   `json:"visibility" binding:"required,min=0,max=1"`
 	WallModel  Wall   `json:"-"`
@@ -21,7 +21,7 @@ func (WV *WallValidator) Bind(c *gin.Context) error {
 	if err != nil {
 		return err
 	}
-	WV.WallModel.Poster_id = WV.Poster_id
+	WV.WallModel.PosterID = WV.PosterID
 	WV.WallModel.Content = WV.Content
 	WV.WallModel.Visibility = WV.Visibility
 	WV.WallModel.Date = time.Now().Format("2006-01-02")

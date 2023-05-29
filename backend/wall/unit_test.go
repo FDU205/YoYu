@@ -24,7 +24,7 @@ var WallRequestTests = []struct {
 	msg            string
 }{
 
-	//---------------------   Testing for user register   ---------------------
+	//---------------------   Testing for create   ---------------------
 	{
 		func(req *http.Request) {},
 		"/api/user/register",
@@ -36,41 +36,67 @@ var WallRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/user/register",
+		"/api/wall/create",
 		"POST",
-		`{"username": "zzx1", "password": "123456"}`,
+		`{"content":"test", visibility: 0}`,
 		http.StatusOK,
-		`{"code":1,"data":null,"err_msg":"该用户名已被使用"}`,
-		"重复注册",
-	},
-
-	//---------------------   Testing for user login   ---------------------
-	{
-		func(req *http.Request) {},
-		"/api/user/login",
-		"POST",
-		`{"username": "zzx1", "password": "123456"}`,
-		http.StatusOK,
-		`{"code":0,"data":{"token":"[a-zA-Z0-9-_.]{137}"},"err_msg":null}`,
-		"登陆成功",
+		`{"code":0,"err_msg":null}`,
+		"创建成功",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/user/login",
+		"/api/wall/create",
 		"POST",
-		`{"username": "zzx2", "password": "123456"}`,
-		http.StatusOK,
-		`{"code":1,"data":null,"err_msg":"用户不存在"}`,
-		"用户不存在",
+		`{"content":"test", visibility: 2}`,
+		http.StatusUnprocessableEntity,
+		`{"code":0,"err_msg":"参数错误"}`,
+		"创建失败，参数错误",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/user/login",
+		"/api/wall/create",
 		"POST",
-		`{"username": "zzx1", "password": "12345"}`,
+		`{}`,
+		http.StatusUnprocessableEntity,
+		`{"code":0,"err_msg":"参数错误"}`,
+		"创建失败，参数错误",
+	},
+	//---------------------   Testing for get   ---------------------
+	{
+		func(req *http.Request) {},
+		"/api/wall/1/1",
+		"GET",
+		`{}`,
 		http.StatusOK,
-		`{"code":1,"data":null,"err_msg":"用户名或密码错误"}`,
-		"密码错误",
+		`{"code":0,"data":{"posts":{"content":"test","id":1,"poster_id":1,"visibility":0}},"err_msg":null}`,
+		"获取成功",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/wall/2/1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"posts":null},"err_msg":null}`,
+		"获取成功",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/wall/1/",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":null,"err_msg":"参数错误"}`,
+		"获取失败，参数错误",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/wall/1/200",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":null,"err_msg":"参数错误"}`,
+		"获取失败，参数错误",
 	},
 }
 
@@ -89,10 +115,15 @@ func TestUsers(t *testing.T) {
 	r := gin.New()
 	v1 := r.Group("/api")
 	WallRegister(v1.Group("/wall"))
-	for _, testData := range WallRequestTests {
+
+	var token string
+	for i, testData := range WallRequestTests {
 		bodyData := testData.bodyData
 		req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))
 		req.Header.Set("Content-Type", "application/json")
+		if i != 0 {
+			req.Header.Set("Authorization", "Bearer "+token)
+		}
 		asserts.NoError(err)
 
 		testData.init(req)
@@ -101,5 +132,8 @@ func TestUsers(t *testing.T) {
 		r.ServeHTTP(w, req)
 		asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
 		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+w.Body.String())
+		if i == 0 {
+			token = w.Body.String()[27:164]
+		}
 	}
 }

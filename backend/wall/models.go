@@ -6,7 +6,7 @@ import (
 
 type Wall struct {
 	ID         uint   `gorm:"primary_key" json:"id"`
-	Poster_id  uint   `gorm:"column:poster_id; not null" json:"poster_id"`
+	PosterID   uint   `gorm:"column:poster_id; not null" json:"poster_id"`
 	Content    string `gorm:"column:body; not null" json:"content"`
 	Visibility uint   `gorm:"column:visibility; not null" json:"visibility"`
 	Date       string `gorm:"column:date; not null" json:"-"`

@@ -18,7 +18,7 @@ func WallRegister(router *gin.RouterGroup) {
 func Create(c *gin.Context) {
 	wallValidator := NewWallValidator()
 	if err := wallValidator.Bind(c); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"err_msg": err.Error()})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"err_msg": "参数错误"})
 		return
 	}
 

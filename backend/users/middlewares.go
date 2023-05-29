@@ -14,7 +14,7 @@ import (
 
 // 从token中剥去bearer前缀
 func stripBearerPrefixFromTokenString(tok string) (string, error) {
-	if len(tok) > 6 && strings.ToUpper(tok[0:6]) == "bearer " {
+	if len(tok) > 6 && strings.ToUpper(tok[0:6]) == "Bearer " {
 		return tok[7:], nil
 	}
 	return tok, nil
@@ -47,7 +47,7 @@ func AuthMiddleware(auto401 bool) gin.HandlerFunc {
 		token, err := request.ParseFromRequest(c.Request, MyAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
 			return []byte(common.TOKEN_KEY), nil
 		})
-		if err != nil || token.Valid {
+		if err != nil || !token.Valid {
 			if auto401 {
 				c.AbortWithError(http.StatusUnauthorized, err)
 			}
@@ -61,7 +61,7 @@ func AuthMiddleware(auto401 bool) gin.HandlerFunc {
 			return
 		} else {
 			userId := claims.Id
-			UpdateContextUserModel(c, userId)
+			c.Set("userID", userId)
 		}
 	}
 }
