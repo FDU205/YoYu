@@ -6,3 +6,7 @@
 
 用户不能超过255位，只能包括字母和数字
 密码不能超过255位，否则会返回错误码4xx
+
+
+数据模型
+Post 添加 message_box_id(integer) poster_id(integer)

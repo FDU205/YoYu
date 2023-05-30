@@ -8,7 +8,7 @@ import (
 
 // validator 在验证用户后把对应的数据模型填好
 type RegisterValidator struct {
-	Username  string `json:"username" binding:"required,alphanum,min=1,max=255"`
+	Username  string `json:"username" binding:"required,min=1,max=255"`
 	Password  string `json:"password" binding:"required,min=1,max=255"`
 	UserModel User   `json:"-"`
 }

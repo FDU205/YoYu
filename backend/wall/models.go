@@ -9,7 +9,7 @@ type Wall struct {
 	ID         uint       `gorm:"primary_key" json:"id"`
 	User       users.User `gorm:"ForeignKey:PosterID" json:"-"`
 	PosterID   uint       `gorm:"column:poster_id; not null" json:"poster_id"`
-	Content    string     `gorm:"column:body; not null" json:"content"`
+	Content    string     `gorm:"column:content; not null" json:"content"`
 	Visibility uint       `gorm:"column:visibility; not null" json:"visibility"`
 	Date       string     `gorm:"column:date; not null" json:"-"`
 }

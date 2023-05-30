@@ -59,6 +59,7 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	serializer := GetSerializer{wall}
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer})
+	c.Set("wallModel", wall)
+	serializer := GetSerializer{c}
+	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()})
 }

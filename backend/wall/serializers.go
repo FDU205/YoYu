@@ -1,5 +1,43 @@
 package wall
 
+import "github.com/gin-gonic/gin"
+
 type GetSerializer struct {
-	Posts []Wall `json:"posts"`
+	c *gin.Context
+}
+
+type Getin struct {
+	ID         uint   `json:"id"`
+	PosterID   uint   `json:"poster_id"`
+	PosterName string `json:"poster_name"`
+	Content    string `json:"content"`
+	Visibility uint   `json:"visibility"`
+}
+
+type GetResponse struct {
+	Posts []Getin `json:"posts"`
+}
+
+func (r *GetSerializer) Response() GetResponse {
+	myWall := r.c.MustGet("wallModel").([]Wall)
+	var myPosts []Getin
+	for _, wall := range myWall {
+		var username string
+		if wall.Visibility == 2 {
+			username = "匿名用户"
+		} else {
+			username = wall.User.Username
+		}
+		myPosts = append(myPosts, Getin{
+			ID:         wall.ID,
+			PosterID:   wall.PosterID,
+			PosterName: username,
+			Content:    wall.Content,
+			Visibility: wall.Visibility,
+		})
+	}
+	ret := GetResponse{
+		Posts: myPosts,
+	}
+	return ret
 }
