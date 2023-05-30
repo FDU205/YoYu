@@ -2,16 +2,10 @@ import { useState } from "react";
 import { Button, TextInput, StyleSheet } from "react-native";
 import { Text, View } from "../../components/Themed";
 import { Link } from '@react-navigation/native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import type { Props } from '../../constants/NavigationType';
+import { Icon } from "../../components/FontAwesomeIcon";
 
-function Icon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
-
-export default function LoginScreen() {
+export default function LoginScreen({ route, navigation }: Props<'login'>) {
   const [username, onChangeUsername] = useState('');
   const [password, onChangePassword] = useState('');
   
@@ -42,15 +36,19 @@ export default function LoginScreen() {
       <View style={styles.botton}>
         <Button
           title="登录"
-          onPress={() => alert("login now!")}
+          onPress={() => HandleLogin(route.params.setisLogin)}
         />
 
-        <Link style={styles.link_text} to={{screen: '(tabs)'}}>
+        <Link style={styles.link_text} to={{screen: 'tabs'}}>
           没账号？注册！
         </Link>
       </View>
     </View>
   );
+}
+
+function HandleLogin(setisLogin: Function) {
+  setisLogin(true);
 }
 
 const styles = StyleSheet.create({

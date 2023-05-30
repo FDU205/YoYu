@@ -1,24 +1,22 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
-import UserLayout from './(user)/_layout'
-import TabLayout from './(tabs)/_layout';
+import UserLayout from './user/_layout'
+import TabLayout from './tabs/_layout';
+import ModalScreen from './modal';
+import { storage } from '../components/Storage';
+import type { NavigationParamList, Props } from '../constants/NavigationType';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<NavigationParamList>();
 
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
-
-// export const unstable_settings = {
-//   // Ensure that reloading on `/modal` keeps a back button present.
-//   initialRouteName: '(user)',
-// };
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -42,24 +40,40 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [isLoggedin, setisLoggedin] = useState(false);
 
+  const setisLogin =(t: boolean | ((prevState: boolean) => boolean)) => {setisLoggedin(t)};
+
+  //storage.load("isLoggedin", setisLogin);
+  //console.error(isLoggedin);
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator>
-        {/* <Stack.Screen 
-          name="(tabs)" 
-          component={TabLayout}
-          options={{ headerShown: false }} 
-        /> */}
-        {/* <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> */}
-        <Stack.Group screenOptions={{ headerShown: false }}>
-          <Stack.Screen 
-            name="(user)" 
-            component={UserLayout}
-            options={{ headerShown: false }} 
-          />
-        </Stack.Group>
-        
+        {
+          !isLoggedin ? (
+            <Stack.Group screenOptions={{ headerShown: false }}>
+              <Stack.Screen 
+                name="user" 
+                component={UserLayout}
+                options={{ headerShown: false }}
+                initialParams={{ setisLogin:setisLogin }}
+              />
+            </Stack.Group>
+          ) : (
+            <Stack.Group screenOptions={{ headerShown: false }}>
+              <Stack.Screen 
+                name="tabs" 
+                component={TabLayout}
+                options={{ headerShown: false }} 
+              />
+              <Stack.Screen 
+                name="modal" 
+                component={ModalScreen} 
+                options={{ presentation: 'modal' }} 
+              />
+            </Stack.Group>
+          )
+        }        
       </Stack.Navigator>
     </ThemeProvider>
   );
