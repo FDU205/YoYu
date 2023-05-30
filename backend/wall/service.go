@@ -6,6 +6,8 @@ func WallCreate(wallModel *Wall) error {
 }
 
 func GetWallByPage(date string, pageNum int, pageSize int) ([]Wall, error) {
-	wall, err := GetWall(date, pageNum, pageSize)
+	offset := (pageNum - 1) * pageSize
+	limit := pageSize
+	wall, err := GetWall(date, offset, limit)
 	return wall, err
 }

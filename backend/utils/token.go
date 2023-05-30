@@ -16,15 +16,11 @@ type MyClaims struct {
 // 根据id生成token
 func GenToken(id uint) string {
 
-	claim := MyClaims{
-		Id: id,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(common.EXP)),  //过期时间
-			NotBefore: jwt.NewNumericDate(time.Now().Add(time.Second)), //最早使用时间
-		},
-	}
+	claims := make(jwt.MapClaims) //数据仓声明
+	claims["exp"] = jwt.NewNumericDate(time.Now().Add(common.EXP))
+	claims["userID"] = id
 
-	token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, claim).SignedString([]byte(common.TOKEN_KEY))
+	token, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(common.TOKEN_KEY))
 	return token
 }
 
@@ -49,6 +45,8 @@ func ParseToken(token string) (*MyClaims, error) {
 	return claims, nil
 }
 
+// 已弃用
+// 将token转换为Claims
 func Token2Claims(token *jwt.Token) (*MyClaims, error) {
 	claims, ok := token.Claims.(*MyClaims)
 	if !ok {

@@ -63,7 +63,7 @@ var UserRequestTests = []struct {
 		"POST",
 		`{"username": "zzx1", "password": "123456"}`,
 		http.StatusOK,
-		`{"code":0,"data":{"username":"zzx1","token":"[a-zA-Z0-9-_.]{137}"},"err_msg":null}`,
+		`{"code":0,"data":{"username":"zzx1","token":"[a-zA-Z0-9-_.]{120}"},"err_msg":null}`,
 		"注册成功",
 	},
 	{
@@ -83,7 +83,7 @@ var UserRequestTests = []struct {
 		"POST",
 		`{"username": "zzx1", "password": "123456"}`,
 		http.StatusOK,
-		`{"code":0,"data":{"token":"[a-zA-Z0-9-_.]{137}"},"err_msg":null}`,
+		`{"code":0,"data":{"token":"[a-zA-Z0-9-_.]{120}"},"err_msg":null}`,
 		"登陆成功",
 	},
 	{
@@ -107,16 +107,23 @@ var UserRequestTests = []struct {
 }
 
 func ResetDB(db *gorm.DB) {
+	db.Exec("drop table if exists walls")
 	db.Exec("drop table if exists users")
 	db.Commit()
 }
 
+func AutoMigrate(db *gorm.DB) {
+	db.AutoMigrate(&User{})
+}
+
 func TestUsers(t *testing.T) {
 	asserts := assert.New(t)
+
+	// 初始化数据库
 	test_db := database.TestInit()
 	ResetDB(test_db)
 	test_db = database.TestInit()
-	test_db.AutoMigrate(&User{})
+	AutoMigrate(test_db)
 
 	r := gin.New()
 	v1 := r.Group("/api")

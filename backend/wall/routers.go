@@ -11,14 +11,14 @@ import (
 // 将Wall模块的功能注册进框架
 func WallRegister(router *gin.RouterGroup) {
 	router.POST("/create", Create)
-	router.POST("/:page_num/:page_size", Get)
+	router.GET("/:page_num/:page_size", Get)
 }
 
 // 创建表白信息
 func Create(c *gin.Context) {
 	wallValidator := NewWallValidator()
 	if err := wallValidator.Bind(c); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"err_msg": "参数错误"})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 1, "err_msg": "参数错误"})
 		return
 	}
 

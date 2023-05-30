@@ -21,8 +21,15 @@ func main() {
 	r := gin.Default()
 
 	v1 := r.Group("/api")
-	users.UsersRegister(v1.Group("/user"))
-	wall.WallRegister(v1.Group("/wall"))
+
+	// 用户模块
+	userG := v1.Group("/user")
+	users.UsersRegister(userG)
+
+	// 表白墙模块
+	wallG := v1.Group("/wall")
+	wallG.Use(users.AuthMiddleware(true))
+	wall.WallRegister(wallG)
 
 	r.Run("127.0.0.1:8080")
 }
