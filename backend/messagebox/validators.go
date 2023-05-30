@@ -9,7 +9,7 @@ import (
 // validator 在验证用户后把对应的数据模型填好
 type MessageBoxValidator struct {
 	OwnerID         uint       `json:"userID" binding:"-"`
-	Title           string     `json:"title" binding:"required"`
+	Title           string     `json:"title" binding:"required,min=1,max=50"`
 	MessageBoxModel MessageBox `json:"-"`
 }
 

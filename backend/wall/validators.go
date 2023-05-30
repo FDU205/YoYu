@@ -10,7 +10,7 @@ import (
 // validator 在验证用户后把对应的数据模型填好
 type WallValidator struct {
 	PosterID   uint   `json:"userID" binding:"-"`
-	Content    string `json:"content" binding:"required"`
+	Content    string `json:"content" binding:"required,min=1,max=200"`
 	Visibility uint   `json:"visibility" binding:"required,min=1,max=2"`
 	WallModel  Wall   `json:"-"`
 }

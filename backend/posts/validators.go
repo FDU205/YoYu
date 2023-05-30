@@ -38,7 +38,7 @@ func NewPostValidator() PostValidator {
 type ChannelValidator struct {
 	OwnerID      uint    `json:"userID" binding:"-"`
 	PostID       uint    `json:"postID" binding:"required"`
-	Content      string  `json:"content" binding:"required"`
+	Content      string  `json:"content" binding:"required,min=1,max=200"`
 	ChannelModel Channel `json:"-"`
 }
 
