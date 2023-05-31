@@ -211,7 +211,7 @@ func TestMessageBox(t *testing.T) {
 	userG.Use(users.AuthMiddleware(false))
 	users.UsersRegister(userG)
 
-	// 表白墙模块
+	// 提问箱模块
 	v1.Use(users.AuthMiddleware(true))
 	MessageBoxRegister(v1)
 
