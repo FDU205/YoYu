@@ -50,9 +50,11 @@ function RootLayoutNav() {
   const [isLoggedin, setisLoggedin] = useState(false);
 
   const setisLogin =(t: boolean | ((prevState: boolean) => boolean)) => {setisLoggedin(t)};
-
-  //storage.load("isLoggedin", setisLogin);
-  //console.error(isLoggedin);
+  let token = null;
+  storage.load("token", (ret)=>{token=ret});
+  if(token) {
+    setisLoggedin(true);
+  }
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator>

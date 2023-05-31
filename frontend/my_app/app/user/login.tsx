@@ -78,6 +78,8 @@ function HandleLogin(setisLogin: Function, username: string, password: string) {
         throw new Error(ret.err_msg);
       } else {
         storage.save("token", ret.data.token.slice(0));
+        storage.save("userid", ret.data.id);
+        storage.save("username", ret.data.username.slice(0));
         setisLogin(true);
       }
     }

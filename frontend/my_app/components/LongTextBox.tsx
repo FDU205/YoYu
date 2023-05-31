@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, TextInput, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { Text } from '../components/Themed';
+import Colors from '../constants/Colors';
 
 interface ILongTextBoxProps {
     placeholder: string;
@@ -11,35 +13,33 @@ const LongTextBox: React.FC<ILongTextBoxProps> = ({
     placeholder,
     onSubmit,
     onChangeOutterText,
-    ...rest
 }) => {
     const [text, onChangeText] = useState('');
     return(
-
-                <KeyboardAvoidingView 
-                    style={styles.container}
-                    behavior='padding' 
-                    keyboardVerticalOffset={90}
-                > 
-                    <TextInput 
+        <ScrollView scrollEnabled={false} style={{padding:0, maxHeight:225}}>
+             <KeyboardAvoidingView 
+                style={styles.container}
+                behavior='padding' 
+                keyboardVerticalOffset={90}
+            > 
+                <TextInput 
                     placeholder={placeholder}
                     defaultValue={text}
                     style={styles.input} 
                     multiline={true} 
+                    maxLength={200}
                     onChangeText={ text => {
-                        onChangeText(text);
-                        onChangeOutterText(text);
-                    }}
-                    /> 
-                </KeyboardAvoidingView>
-
-        
+                    onChangeText(text);
+                    onChangeOutterText(text);
+                }}
+                />
+            </KeyboardAvoidingView>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        alignItems:'center',
         borderStyle: 'solid',
         borderColor: 'white',
         backgroundColor: 'rgba(255,255,255,1)',
@@ -51,16 +51,19 @@ const styles = StyleSheet.create({
         shadowRadius: 6, // 阴影模糊半径
         shadowOpacity: 0.2, // 阴影不透明度
         shadowColor: '#5c5c5c', // 设置阴影色
-        padding:0,
+        padding:10,
+        height:200,
     },
     input: {
-        alignSelf:'center',
+        alignItems:'flex-start',
         borderWidth:0,
         borderColor:'#666',
         textAlign:'left',
         textAlignVertical:'top',
         fontSize: 20,
-    }
+        padding: 0,
+        minHeight: 200,
+    },
 });
 
 export default LongTextBox;
