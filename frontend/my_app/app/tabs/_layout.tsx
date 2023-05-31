@@ -47,7 +47,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="wall"
+        name="tabwall"
         component={TabWallScreen}
         options={{
           title: '表白墙',
@@ -72,6 +72,7 @@ export default function TabLayout() {
         name="homepage"
         component={HomePageLayout}
         options={{
+          title: '我的主页',
           tabBarLabel: '我的',
           tabBarIcon: ({ color }) => (<Icon name="code" color={color} />),
           headerRight: () => (
@@ -81,7 +82,7 @@ export default function TabLayout() {
             />
           ),
         }}
-        initialParams={{ userid: g.userid, username: g.username  }}
+        initialParams={{ userid: g.userid, username: g.username }}
       />
     </Tabs.Navigator>
   );

@@ -45,13 +45,18 @@ const TEST_DATA = [
   },
 ];
 
-const onPress = () => {
+const onPress = (userid: number, username: string, visibility: number, navigation: NativeStackNavigationProp<NavigationParamList, "tabwall", undefined>) => {
+  if(visibility == 1) {
+    navigation.navigate(
+      'homepagemodal',{userid: userid, username: username},
+    );
+  }
   return;
 };
 
 const PAGE_SIZE = 10;
 
-export default function TabWallScreen() {
+export default function TabWallScreen({ route, navigation }: Props<'tabwall'>) {
   const [data, setdata] = useState(new Array<wallpost>(0));
   let page_num = 2;
   const getNextWall = () => {
@@ -97,7 +102,7 @@ export default function TabWallScreen() {
         style={styles.flat}
         data={data}
         renderItem={({ item }) => 
-          <Card title={item.poster_name} text={item.content} onPress={onPress}/>
+          <Card title={item.poster_name} text={item.content} onPress={() => {onPress(item.id, item.poster_name, item.visibility, navigation)}}/>
         }
         refreshing={false}
         keyExtractor={(item) => item.id.toString()}

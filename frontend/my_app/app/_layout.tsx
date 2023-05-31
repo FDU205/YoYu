@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import UserLayout from './user/_layout'
 import TabLayout from './tabs/_layout';
-import HomePageLayout from './homepage/_latout';
+import HomePageModalLayout from './homepagemodal';
 import ModalScreen from './modal';
 import WallAddModalScreen from './walladdmodal';
 import { storage } from '../components/Storage';
@@ -104,9 +104,10 @@ function RootLayoutNav() {
                 component={WallAddModalScreen} 
                 options={{ presentation: 'modal' }} 
               />
-              <Stack.Screen
-                name="homepage"
-                component={HomePageLayout}
+              <Stack.Screen 
+                name="homepagemodal" 
+                component={HomePageModalLayout} 
+                options={{ presentation: 'modal' }} 
               />
             </Stack.Group>
           )

@@ -67,7 +67,7 @@ function failToast(msg: string) {
   Alert.alert(msg);
 }
 
-const HandleCreateWall = (content: string, visibility: boolean, navigation: NativeStackNavigationProp<NavigationParamList, "walladdmodal", undefined>) => {
+const HandleCreateWall = async (content: string, visibility: boolean, navigation: NativeStackNavigationProp<NavigationParamList, "walladdmodal", undefined>) => {
   if(content.length < 1) {
     failToast("表白内容不能为空！");
     return;

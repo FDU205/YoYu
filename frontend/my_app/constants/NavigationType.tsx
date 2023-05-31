@@ -5,9 +5,11 @@ type NavigationParamList = {
     login : { setisLogin : Function };
     register : { setisLogin : Function };
     tabs : undefined;
+    tabwall: undefined;
     modal : undefined;
     walladdmodal : undefined;
     homepage : { userid : number, username : string };
+    homepagemodal : { userid : number, username : string };
 };
 
 type Props<T extends keyof NavigationParamList> = NativeStackScreenProps<NavigationParamList, T>;

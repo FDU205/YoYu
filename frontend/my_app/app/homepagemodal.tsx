@@ -1,18 +1,19 @@
 import { Pressable, useColorScheme } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import { Icon } from '../../components/FontAwesomeIcon';
-import { Text, View } from '../../components/Themed';
+import { Icon } from '../components/FontAwesomeIcon';
+import { Text, View } from '../components/Themed';
 import { StyleSheet } from 'react-native';
-import TabWallScreen from './wall';
-import { useState } from 'react';
+import TabWallScreen from './homepage/wall';
+import { storage } from '../components/Storage';
+import React, { useState } from 'react';
 import { Link } from 'expo-router';
-import { Props } from '../../constants/NavigationType'; 
-import g from '../globaldata';
+import { Props } from '../constants/NavigationType'; 
+import g from './globaldata';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const Tabs = createMaterialTopTabNavigator();
 
-export default function HomePageLayout({ route, navigation } : Props<'homepage'>) {
+export default function HomePageModalLayout({ route, navigation } : Props<'homepagemodal'>) {
   const colorScheme = useColorScheme();
   const [ismine, setismine] = useState(route.params.username == g.username);
   const [follownum, setfollownum] = useState(0);
