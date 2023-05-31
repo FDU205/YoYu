@@ -1,6 +1,10 @@
 package wall
 
-import "github.com/gin-gonic/gin"
+import (
+	"YOYU/backend/users"
+
+	"github.com/gin-gonic/gin"
+)
 
 type GetSerializer struct {
 	c *gin.Context
@@ -20,13 +24,14 @@ type GetResponse struct {
 
 func (r *GetSerializer) Response() GetResponse {
 	myWall := r.c.MustGet("wallModel").([]Wall)
-	var myPosts []Getin
+	var myPosts = []Getin{}
 	for _, wall := range myWall {
 		var username string
 		if wall.Visibility == 2 {
 			username = "匿名用户"
 		} else {
-			username = wall.User.Username
+			user, _ := users.GetUser(&users.User{ID: wall.PosterID})
+			username = user.Username
 		}
 		myPosts = append(myPosts, Getin{
 			ID:         wall.ID,

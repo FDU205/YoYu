@@ -32,7 +32,7 @@ var WallRequestTests = []struct {
 		"POST",
 		`{"username": "zzx1", "password": "123456"}`,
 		http.StatusOK,
-		`{"code":0,"data":{"username":"zzx1","token":"[a-zA-Z0-9-_.]{120}"},"err_msg":null}`,
+		`{"code":0,"data":{"username":"zzx1","id":1,"token":"[a-zA-Z0-9-_.]{120}"},"err_msg":null}`,
 		"注册成功",
 	},
 	{
@@ -57,7 +57,7 @@ var WallRequestTests = []struct {
 		func(req *http.Request) {},
 		"/api/wall/create",
 		"POST",
-		`{"content": "test3", "visibility": 1}`,
+		`{"content": "test3", "visibility": 2}`,
 		http.StatusOK,
 		`{"code":0,"err_msg":null}`,
 		"创建成功",
@@ -87,7 +87,7 @@ var WallRequestTests = []struct {
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":3,"poster_id":1,"content":"test3","visibility":1}\]},"err_msg":null}`,
+		`{"code":0,"data":{"posts":\[{"id":3,"poster_id":1,"poster_name":"匿名用户","content":"test3","visibility":2}\]},"err_msg":null}`,
 		"获取帖子3",
 	},
 	{
@@ -96,7 +96,7 @@ var WallRequestTests = []struct {
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":2,"poster_id":1,"content":"test2","visibility":1}\]},"err_msg":null}`,
+		`{"code":0,"data":{"posts":\[{"id":2,"poster_id":1,"poster_name":"zzx1","content":"test2","visibility":1}\]},"err_msg":null}`,
 		"获取帖子2",
 	},
 	{
@@ -105,7 +105,7 @@ var WallRequestTests = []struct {
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":3,"poster_id":1,"content":"test3","visibility":1},{"id":2,"poster_id":1,"content":"test2","visibility":1}\]},"err_msg":null}`,
+		`{"code":0,"data":{"posts":\[{"id":3,"poster_id":1,"poster_name":"匿名用户","content":"test3","visibility":2},{"id":2,"poster_id":1,"poster_name":"zzx1","content":"test2","visibility":1}\]},"err_msg":null}`,
 		"获取帖子3-2",
 	},
 	{
@@ -114,7 +114,7 @@ var WallRequestTests = []struct {
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":1,"poster_id":1,"content":"test1","visibility":1}\]},"err_msg":null}`,
+		`{"code":0,"data":{"posts":\[{"id":1,"poster_id":1,"poster_name":"zzx1","content":"test1","visibility":1}\]},"err_msg":null}`,
 		"获取帖子1",
 	},
 	{
@@ -124,7 +124,7 @@ var WallRequestTests = []struct {
 		`{}`,
 		http.StatusOK,
 		`{"code":0,"data":{"posts":\[\]},"err_msg":null}`,
-		"获取帖子3",
+		"获取帖子不到",
 	},
 	{
 		func(req *http.Request) {},
@@ -139,6 +139,7 @@ var WallRequestTests = []struct {
 
 func ResetDB(db *gorm.DB) {
 	db.Exec("drop table if exists walls")
+	db.Exec("drop table if exists followers")
 	db.Exec("drop table if exists users")
 	db.Commit()
 }
@@ -186,7 +187,7 @@ func TestWalls(t *testing.T) {
 		asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
 		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 		if i == 0 {
-			token = w.Body.String()[45:165]
+			token = w.Body.String()[52:172]
 		}
 	}
 }
