@@ -52,14 +52,27 @@ function RootLayoutNav() {
   const [isLoggedin, setisLoggedin] = useState(false);
 
   const setisLogin =(t: boolean | ((prevState: boolean) => boolean)) => {setisLoggedin(t)};
-  storage.load("token", (ret)=>{g.token=ret});
-  storage.load("username", (ret)=>{g.username=ret});
-  storage.load("userid", (ret)=>{g.userid=ret});
-  useEffect(() => {()=>{
-    if(g.token != null) {
-      setisLoggedin(true);
-    }
-  }}, []);
+  useEffect(() => {
+    Promise.all([
+      storage.load({key:"token"}),
+      storage.load({key:"username"}),
+      storage.load({key:"userid"}),
+    ]).then(([token, username, userid]) => {
+      // 将数据存储到全局变量中
+      g.token = token;
+      g.username = username;
+      g.userid = userid;
+
+      console.log(g.token);
+
+      // 检查是否已登录
+      if (g.token != null) {
+        setisLoggedin(true);
+      }
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
   
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

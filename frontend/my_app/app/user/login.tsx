@@ -6,6 +6,7 @@ import type { Props } from '../../constants/NavigationType';
 import { Icon } from "../../components/FontAwesomeIcon";
 import { postData } from '../../components/Api';
 import { storage } from "../../components/Storage";
+import g from '../globaldata';
 
 export default function LoginScreen({ route, navigation }: Props<'login'>) {
   const [username, onChangeUsername] = useState('');
@@ -77,10 +78,20 @@ function HandleLogin(setisLogin: Function, username: string, password: string) {
       if(ret.code != 0) {
         throw new Error(ret.err_msg);
       } else {
-        storage.save("token", ret.data.token.slice(0));
-        storage.save("userid", ret.data.id);
-        storage.save("username", ret.data.username.slice(0));
-        setisLogin(true);
+        Promise.all([
+          storage.save({key:"token", data:ret.data.token.slice(0)}),
+          storage.save({key:"username", data:ret.data.username.slice(0)}),
+          storage.save({key:"userid", data:ret.data.id}),
+        ]).then(() => {
+          // 将数据存储到全局变量中
+          g.token = ret.data.token.slice(0);
+          g.username = ret.data.username.slice(0);
+          g.userid = ret.data.id;
+  
+          setisLogin(true);
+        }).catch((err) => {
+          console.log(err);
+        });
       }
     }
   ).catch(

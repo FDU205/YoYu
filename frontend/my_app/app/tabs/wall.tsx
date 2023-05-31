@@ -2,9 +2,9 @@ import { Alert, FlatList, StyleSheet } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import Card from '../../components/Card';
 import { getData } from '../../components/Api';
-import { storage } from '../../components/Storage';
 import { SetStateAction, useEffect, useState } from 'react';
 import type { wallpost } from '../../constants/DataType';
+import g from '../globaldata';
 
 const TEST_DATA = [
   {
@@ -53,10 +53,9 @@ const PAGE_SIZE = 10;
 
 export default function TabWallScreen() {
   const [data, setdata] = useState(new Array<wallpost>(0));
-  let page_num = 1;
-  let token = "";
+  let page_num = 2;
   const getNextWall = () => {
-    getData("/wall?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),token).then(
+    getData("/wall?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),g.token).then(
       ret => {
         if(ret.code != 0) {
           throw new Error(ret.err_msg);
@@ -65,17 +64,16 @@ export default function TabWallScreen() {
           data.push.apply(data, temp);
         }
       }
-    ).catch(
+    ).then(()=>{
+      page_num++;
+    }).catch(
       err => {
         failToast(err+" 刷新失败");
       }
     )
   }
   const getNewWall = (setdata: { (value: SetStateAction<wallpost[]>): void; (arg0: any): void; }) => {
-    if(token == ""){
-      storage.load("token", (ret)=>{token=ret});
-    }
-    getData("/wall?page_num=1&page_size="+PAGE_SIZE.toString(),token).then(
+    getData("/wall?page_num=1&page_size="+PAGE_SIZE.toString(),g.token).then(
       ret => {
         if(ret.code != 0) {
           throw new Error(ret.err_msg);

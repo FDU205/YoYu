@@ -1,4 +1,4 @@
-var g = {
+const g = {
     username: "",
     userid: 0,
     token: "",

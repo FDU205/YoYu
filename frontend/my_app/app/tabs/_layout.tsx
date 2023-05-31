@@ -1,6 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link } from 'expo-router';
-import { Pressable, useColorScheme } from 'react-native';
+import { Button, Pressable, useColorScheme } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabOneScreen from './one'
 import TabWallScreen from './wall';
@@ -11,6 +11,7 @@ import Colors from '../../constants/Colors';
 import { Icon } from '../../components/FontAwesomeIcon';
 import { Props } from '../../constants/NavigationType';
 import g from '../globaldata';
+import Logout from '../user/logout';
 
 const Tabs = createBottomTabNavigator();
 
@@ -73,6 +74,12 @@ export default function TabLayout() {
         options={{
           tabBarLabel: '我的',
           tabBarIcon: ({ color }) => (<Icon name="code" color={color} />),
+          headerRight: () => (
+            <Button
+              title="退出登录"
+              onPress={Logout}
+            />
+          ),
         }}
         initialParams={{ userid: g.userid, username: g.username  }}
       />

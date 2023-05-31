@@ -8,7 +8,6 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Colors from '../constants/Colors';
 import Card from '../components/Card';
 import {Keyboard} from 'react-native';
-import { storage } from '../components/Storage';
 import { postData } from '../components/Api';
 import { NavigationParamList, Props } from '../constants/NavigationType';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -73,9 +72,7 @@ const HandleCreateWall = (content: string, visibility: boolean, navigation: Nati
     failToast("表白内容不能为空！");
     return;
   }
-  let token;
-  storage.load("token", (ret)=>{token=ret});
-  postData("/wall/create", {"content" : content, "visibility" : visibility?1:2}, token).then(
+  postData("/wall/create", {"content" : content, "visibility" : visibility?1:2}, g.token).then(
     ret => {
       if(ret.code != 0) {
         throw new Error(ret.err_msg);

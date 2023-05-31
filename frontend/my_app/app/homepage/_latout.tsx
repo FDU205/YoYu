@@ -4,7 +4,6 @@ import { Icon } from '../../components/FontAwesomeIcon';
 import { Text, View } from '../../components/Themed';
 import { StyleSheet } from 'react-native';
 import TabWallScreen from './wall';
-import { storage } from '../../components/Storage';
 import { useState } from 'react';
 import { Link } from 'expo-router';
 import { Props } from '../../constants/NavigationType'; 
