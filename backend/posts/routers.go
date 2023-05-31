@@ -10,8 +10,8 @@ import (
 // 将Post模块的功能注册进框架
 func PostRegister(router *gin.RouterGroup) {
 	router.POST("/post", Create)
-	router.POST("/post/answer", CreateAnswer)
-	router.GET("/posts/:page_num/:page_size/:message_box_id", Search)
+	router.POST("/post/channel", CreateAnswer)
+	router.GET("/posts", Search)
 	router.GET("/post/:id", Get)
 	router.DELETE("/post/:id", Delete)
 }
@@ -20,7 +20,7 @@ func PostRegister(router *gin.RouterGroup) {
 func Create(c *gin.Context) {
 	postValidator := NewPostValidator()
 	if err := postValidator.Bind(c); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 1, "err_msg": "参数错误"})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
 		return
 	}
 
@@ -57,9 +57,9 @@ func Get(c *gin.Context) {
 
 // 查询帖子
 func Search(c *gin.Context) {
-	message_box_id_str := c.Param("message_box_id")
-	page_num_str := c.Param("page_num")
-	page_size_str := c.Param("page_size")
+	message_box_id_str := c.Query("message_box_id")
+	page_num_str := c.Query("page_num")
+	page_size_str := c.Query("page_size")
 
 	message_box_id, err := strconv.Atoi(message_box_id_str)
 	if err != nil {

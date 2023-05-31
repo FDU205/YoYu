@@ -10,7 +10,7 @@ import (
 type PostValidator struct {
 	MessageBoxID uint   `json:"message_box_id" binding:"required"`
 	PosterID     uint   `json:"userID" binding:"-"`
-	Content      string `json:"content" binding:"required"`
+	Content      string `json:"content" binding:"required,min=1,max=200"`
 	Visibility   uint   `json:"visibility" binding:"required,min=1,max=2"`
 	PostModel    Post   `json:"-"`
 }
@@ -37,8 +37,9 @@ func NewPostValidator() PostValidator {
 // validator 在验证用户后把对应的数据模型填好
 type ChannelValidator struct {
 	OwnerID      uint    `json:"userID" binding:"-"`
-	PostID       uint    `json:"postID" binding:"required"`
+	PostID       uint    `json:"post_id" binding:"required"`
 	Content      string  `json:"content" binding:"required,min=1,max=200"`
+	Type         uint    `json:"type" binding:"required,min=1,max=2"`
 	ChannelModel Channel `json:"-"`
 }
 
@@ -51,6 +52,7 @@ func (CV *ChannelValidator) Bind(c *gin.Context) error {
 	CV.OwnerID = c.MustGet("userID").(uint)
 	CV.ChannelModel.PostID = CV.PostID
 	CV.ChannelModel.Content = CV.Content
+	CV.ChannelModel.Type = CV.Type
 	return nil
 }
 

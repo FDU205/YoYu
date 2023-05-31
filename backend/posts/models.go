@@ -11,23 +11,24 @@ type Post struct {
 	User         users.User            `gorm:"ForeignKey:PosterID" json:"-"`
 	PosterID     uint                  `gorm:"column:poster_id; not null" json:"poster_id"`
 	MessageBox   messagebox.MessageBox `gorm:"ForeignKey:MessageBoxID" json:"-"`
-	MessageBoxID uint                  `gorm:"column:message_box_id; not null" json:"-"`
+	MessageBoxID uint                  `gorm:"column:message_box_id; not null" json:"message_box_id"`
 	Content      string                `gorm:"column:content; not null" json:"content"`
 	Visibility   uint                  `gorm:"column:visibility; not null" json:"visibility"`
 }
 
 type Channel struct {
-	ID      uint   `gorm:"primary_key"`
-	Post    Post   `gorm:"ForeignKey:PostID"`
-	PostID  uint   `gorm:"column:post_id; not null"`
-	Content string `gorm:"column:content; not null"`
+	ID      uint   `gorm:"primary_key" json:"id"`
+	Post    Post   `gorm:"ForeignKey:PostID" json:"-"`
+	PostID  uint   `gorm:"column:post_id; not null" json:"post_id"`
+	Content string `gorm:"column:content; not null" json:"content"`
+	Type    uint   `gorm:"column:type; not null" json:"type"`
 }
 
 // 获取回复
 func GetChannels(postID uint) ([]Channel, error) {
 	db := database.GetDB()
 	var channels []Channel
-	err := db.Where("post_id = ?", postID).Find(&channels).Error
+	err := db.Where("post_id = ?", postID).Order("id").Find(&channels).Error
 	return channels, err
 }
 

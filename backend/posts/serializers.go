@@ -1,6 +1,10 @@
 package posts
 
-import "github.com/gin-gonic/gin"
+import (
+	"YOYU/backend/users"
+
+	"github.com/gin-gonic/gin"
+)
 
 type SearchSerializer struct {
 	Posts []Post `json:"posts"`
@@ -11,26 +15,37 @@ type GetSerializer struct {
 }
 
 type GetResponse struct {
-	ID       uint     `json:"id"`
-	PosterID uint     `json:"poster_id"`
-	Content  string   `json:"content"`
-	Channels []string `json:"channels"`
+	ID           uint      `json:"id"`
+	PosterID     uint      `json:"post_id"`
+	PosterName   string    `json:"post_name"`
+	Content      string    `json:"content"`
+	Visibility   uint      `json:"visibility"`
+	MessageBoxID uint      `json:"message_box_id"`
+	Threads      []Channel `json:"threads"`
+	Channels     []string  `json:"channels"`
 }
 
 func (r *GetSerializer) Response() GetResponse {
-	myMessageBox := r.c.MustGet("postModel").(Post)
-	myChannels := r.c.MustGet("channels").([]Channel)
+	mypostModel := r.c.MustGet("postModel").(Post)
+	myThreads := r.c.MustGet("channels").([]Channel)
 
-	var channelContents []string
-	for _, channel := range myChannels {
-		channelContents = append(channelContents, channel.Content)
+	var postname string
+	if mypostModel.Visibility == 2 {
+		postname = "匿名用户"
+	} else {
+		user, _ := users.GetUser(&users.User{ID: mypostModel.PosterID})
+		postname = user.Username
 	}
 
 	ret := GetResponse{
-		ID:       myMessageBox.ID,
-		PosterID: myMessageBox.PosterID,
-		Content:  myMessageBox.Content,
-		Channels: channelContents,
+		ID:           mypostModel.ID,
+		PosterID:     mypostModel.PosterID,
+		PosterName:   postname,
+		Content:      mypostModel.Content,
+		Visibility:   mypostModel.Visibility,
+		MessageBoxID: mypostModel.MessageBoxID,
+		Threads:      myThreads,
+		Channels:     []string{},
 	}
 	return ret
 }

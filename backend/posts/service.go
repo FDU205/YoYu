@@ -1,6 +1,10 @@
 package posts
 
-import "errors"
+import (
+	"YOYU/backend/messagebox"
+	"YOYU/backend/users"
+	"errors"
+)
 
 // 创建帖子
 func PostCreate(postModel *Post) error {
@@ -38,7 +42,21 @@ func ChannelCreate(owner_id uint, channelModel *Channel) error {
 	if err != nil {
 		return err
 	}
-	if post.MessageBox.OwnerID != owner_id {
+	// 只能追问自己的帖子
+	if channelModel.Type == 1 && owner_id != post.PosterID {
+		return errors.New("无权限追问")
+	}
+	messagebox, err := messagebox.MessageBoxGetByID(post.MessageBoxID)
+	if err != nil {
+		return errors.New("错误")
+	}
+	user, err := users.GetUser(&users.User{ID: messagebox.OwnerID})
+	if err != nil {
+		return errors.New("错误")
+	}
+
+	// 只能回答自己提问箱里的问题
+	if channelModel.Type == 2 && user.ID != owner_id {
 		return errors.New("无权限回复")
 	}
 	err = CreateChannel(channelModel)
