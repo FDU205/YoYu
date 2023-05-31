@@ -139,6 +139,15 @@ var PostRequestTests = []struct {
 		`{"code":0,"data":{"posts":\[{"id":2,"poster_id":2,"message_box_id":1,"content":"2","visibility":2}\]},"err_msg":null}`,
 		"查帖子2",
 	},
+	{
+		func(req *http.Request) {},
+		"/api/mypost?page_num=1&page_size=1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"posts":\[{"id":2,"poster_id":2,"message_box_id":1,"content":"2","visibility":2}\]},"err_msg":null}`,
+		"查帖子2",
+	},
 }
 
 var ChannelRequestTests = []struct {
@@ -193,6 +202,24 @@ var ChannelRequestTests = []struct {
 		`{}`,
 		http.StatusOK,
 		`{"code":0,"data":{"id":2,"post_id":2,"post_name":"匿名用户","content":"2","visibility":2,"message_box_id":1,"threads":\[{"id":1,"post_id":2,"content":"回答","type":2},{"id":2,"post_id":2,"content":"追问","type":1}\],"channels":\[\]},"err_msg":null}`,
+		"查帖子2",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/mypost?page_num=1&page_size=1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"posts":\[{"id":2,"poster_id":2,"message_box_id":1,"content":"2","visibility":2}\]},"err_msg":null}`,
+		"查帖子2",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/mypost?page_num=1&page_size=1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"posts":\[\]},"err_msg":null}`,
 		"查帖子2",
 	},
 }

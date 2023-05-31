@@ -54,6 +54,14 @@ func GetPostByID(postID uint) (Post, error) {
 	return post, err
 }
 
+// 根据用户ID获取帖子
+func GetPostByUserID(userID uint, offset int, limit int) ([]Post, error) {
+	db := database.GetDB()
+	var posts []Post
+	err := db.Where("poster_id = ?", userID).Order("id desc").Limit(limit).Offset(offset).Find(&posts).Error
+	return posts, err
+}
+
 // 查询帖子
 func SearchPost(message_box_id uint, offset int, limit int) ([]Post, error) {
 	db := database.GetDB()

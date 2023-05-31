@@ -30,6 +30,14 @@ func PostSearch(message_box_id uint, pageNum int, pageSize int) ([]Post, error) 
 	return post, err
 }
 
+// 获取我的帖子
+func MyPostGet(userID uint, pageNum int, pageSize int) ([]Post, error) {
+	offset := (pageNum - 1) * pageSize
+	limit := pageSize
+	post, err := GetPostByUserID(userID, offset, limit)
+	return post, err
+}
+
 // 根据ID删除帖子
 func PostDeleteByID(postID uint, ownerID uint) error {
 	err := DeletePostByID(postID, ownerID)

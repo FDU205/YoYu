@@ -135,9 +135,21 @@ var WallRequestTests = []struct {
 		`{"code":1,"data":null,"err_msg":"参数错误"}`,
 		"获取失败，参数错误",
 	},
+	{
+		func(req *http.Request) {},
+		"/api/wall/mywall?page_num=1&page_size=2",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"posts":\[{"id":3,"poster_id":1,"poster_name":"匿名用户","content":"test3","visibility":2},{"id":2,"poster_id":1,"poster_name":"zzx1","content":"test2","visibility":1}\]},"err_msg":null}`,
+		"获取帖子3-2",
+	},
 }
 
 func ResetDB(db *gorm.DB) {
+	db.Exec("drop table if exists channels")
+	db.Exec("drop table if exists posts")
+	db.Exec("drop table if exists message_boxes")
 	db.Exec("drop table if exists walls")
 	db.Exec("drop table if exists followers")
 	db.Exec("drop table if exists users")

@@ -12,6 +12,7 @@ import (
 func WallRegister(router *gin.RouterGroup) {
 	router.POST("/create", Create)
 	router.GET("", Get)
+	router.GET("/mywall", GetMyWall)
 }
 
 // 创建表白信息
@@ -53,6 +54,41 @@ func Get(c *gin.Context) {
 	}
 
 	wall, err := GetWallByPage(time.Now().Format("2006-01-02"), page_num, page_size)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": err.Error(), "data": nil})
+		return
+	}
+
+	c.Set("wallModel", wall)
+	serializer := GetSerializer{c}
+	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()})
+}
+
+// 返回我的表白信息
+func GetMyWall(c *gin.Context) {
+	page_num_str := c.Query("page_num")
+	page_size_str := c.Query("page_size")
+
+	if page_num_str == "" || page_size_str == "" {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
+		return
+	}
+
+	page_num, err := strconv.Atoi(page_num_str)
+	if err != nil || page_num < 1 {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
+		return
+	}
+
+	page_size, err := strconv.Atoi(page_size_str)
+	if err != nil || page_size < 1 || page_size > 100 {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
+		return
+	}
+
+	UserID := c.MustGet("userID").(uint)
+	wall, err := MyWallGet(UserID, page_num, page_size)
 
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": err.Error(), "data": nil})

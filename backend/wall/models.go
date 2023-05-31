@@ -30,3 +30,13 @@ func GetWall(date string, offset int, limit int) ([]Wall, error) {
 	err := db.Where("Date = ?", date).Order("id desc").Limit(limit).Offset(offset).Find(&wall).Error
 	return wall, err
 }
+
+// 返回我的表白信息
+func GetWallbyID(id uint, offset int, limit int) ([]Wall, error) {
+
+	db := database.GetDB()
+	var wall []Wall
+
+	err := db.Where("poster_id = ?", id).Order("id desc").Limit(limit).Offset(offset).Find(&wall).Error
+	return wall, err
+}

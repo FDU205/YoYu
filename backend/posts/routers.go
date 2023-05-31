@@ -13,6 +13,7 @@ func PostRegister(router *gin.RouterGroup) {
 	router.POST("/post/channel", CreateAnswer)
 	router.GET("/posts", Search)
 	router.GET("/post/:id", Get)
+	router.GET("/mypost", GetMyPost)
 	router.DELETE("/post/:id", Delete)
 }
 
@@ -122,4 +123,33 @@ func CreateAnswer(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": channelValidator.ChannelModel})
+}
+
+// 查询帖子
+func GetMyPost(c *gin.Context) {
+	page_num_str := c.Query("page_num")
+	page_size_str := c.Query("page_size")
+
+	page_num, err := strconv.Atoi(page_num_str)
+	if err != nil || page_num < 1 {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
+		return
+	}
+
+	page_size, err := strconv.Atoi(page_size_str)
+	if err != nil || page_size < 1 || page_size > 100 {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
+		return
+	}
+
+	userID := c.MustGet("userID").(uint)
+	posts, err := MyPostGet(userID, page_num, page_size)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": err.Error(), "data": nil})
+		return
+	}
+
+	serializer := SearchSerializer{posts}
+	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer})
 }

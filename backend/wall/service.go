@@ -11,3 +11,10 @@ func GetWallByPage(date string, pageNum int, pageSize int) ([]Wall, error) {
 	wall, err := GetWall(date, offset, limit)
 	return wall, err
 }
+
+func MyWallGet(id uint, pageNum int, pageSize int) ([]Wall, error) {
+	offset := (pageNum - 1) * pageSize
+	limit := pageSize
+	wall, err := GetWallbyID(id, offset, limit)
+	return wall, err
+}
