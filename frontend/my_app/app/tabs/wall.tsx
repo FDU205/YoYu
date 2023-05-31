@@ -86,6 +86,7 @@ export default function TabWallScreen({ route, navigation }: Props<'tabwall'>) {
     )
   }
   const getNewWall = (setdata: { (value: SetStateAction<wallpost[]>): void; (arg0: any): void; }) => {
+    page_num = 1;
     getData("/wall?page_num=1&page_size="+PAGE_SIZE.toString(),g.token).then(
       ret => {
         if(ret.code != 0) {

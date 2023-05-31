@@ -13,18 +13,17 @@ import { NavigationParamList, Props } from '../constants/NavigationType';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import g from './globaldata';
 
-export default function WallAddModalScreen({ route, navigation }: Props<'walladdmodal'>) {
+export default function BoxAddModalScreen({ route, navigation }: Props<'boxaddmodal'>) {
   const colorScheme = useColorScheme();
   const [text, onChangeText] = useState('');
-  const [visibility, onChangeVisibility] = useState(true);
 
   return (
     <View style={styles.container}>
       <View style={{ flexDirection:'row', alignSelf:'flex-end'}}>
         <Text style={styles.title}>
-          发布你的表白
+          发布你的提问箱~
         </Text>
-        <Pressable onPress={()=>{HandleCreateWall(text, visibility, navigation)}} style={{marginLeft:100}}>
+        <Pressable onPress={()=>{HandleCreateBox(text, navigation)}} style={{marginLeft:100}}>
             {({ pressed }) => (
               <FontAwesome
                 name="paper-plane"
@@ -37,7 +36,7 @@ export default function WallAddModalScreen({ route, navigation }: Props<'walladd
       </View>
       
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <LongTextBox placeholder='文明表白(最多200字)' onSubmit={()=>{}} onChangeOutterText={onChangeText}/>
+      <LongTextBox placeholder='提问箱标题(最多50字)' onSubmit={()=>{}} onChangeOutterText={onChangeText}/>
       <Text style={{
         padding: 0,
         color: 'gray',
@@ -45,27 +44,13 @@ export default function WallAddModalScreen({ route, navigation }: Props<'walladd
         fontSize: 15,
         marginRight: 30,
       }}>
-          {text.length} / 200
+          {text.length} / 50
       </Text>
-      <Text style={{
-        padding: 10,
-        color: 'gray',
-        alignSelf:'flex-end',
-        fontSize: 15,
-        marginRight: 20,
-      }}>
-          实名发表
-      </Text>
-      <Switch 
-        style={styles.switch} 
-        value={visibility} 
-        onValueChange={onChangeVisibility} 
-        trackColor={{true: Colors.light.tint}}
-      />
+      
       <Text style={styles.text}>
           预览：
       </Text>
-      <Card title={!visibility ? "匿名用户":g.username} text={text} onPress={() => {Keyboard.dismiss()}}/>
+      <Card title={text} text={"\n\n"+g.username+" 的提问箱↑"} onPress={() => {Keyboard.dismiss()}}/>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
@@ -76,12 +61,12 @@ function failToast(msg: string) {
   Alert.alert(msg);
 }
 
-const HandleCreateWall = async (content: string, visibility: boolean, navigation: NativeStackNavigationProp<NavigationParamList, "walladdmodal", undefined>) => {
+const HandleCreateBox = async (content: string, navigation: NativeStackNavigationProp<NavigationParamList, "boxaddmodal", undefined>) => {
   if(content.length < 1) {
     failToast("表白内容不能为空！");
     return;
   }
-  postData("/wall/create", {"content" : content, "visibility" : visibility?1:2}, g.token).then(
+  postData("/messageBox", {"title" : content}, g.token).then(
     ret => {
       if(ret.code != 0) {
         throw new Error(ret.err_msg);

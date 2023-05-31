@@ -9,6 +9,7 @@ type NavigationParamList = {
     boxes: undefined;
     modal : undefined;
     walladdmodal : undefined;
+    boxaddmodal : undefined;
     homepage : { userid : number, username : string };
     homepagemodal : { userid : number, username : string };
 };

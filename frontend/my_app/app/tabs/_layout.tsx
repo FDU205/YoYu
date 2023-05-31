@@ -31,7 +31,7 @@ export default function TabLayout() {
           title: '提问箱',
           tabBarIcon: ({ color }) => <Icon name="envelope-square" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/boxaddmodal" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome

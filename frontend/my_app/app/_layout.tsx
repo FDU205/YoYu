@@ -14,6 +14,7 @@ import { storage } from '../components/Storage';
 import type { NavigationParamList, Props } from '../constants/NavigationType';
 import { LogBox } from 'react-native';
 import g from './globaldata';
+import BoxAddModalScreen from './boxaddmodal';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -107,6 +108,11 @@ function RootLayoutNav() {
               <Stack.Screen 
                 name="homepagemodal" 
                 component={HomePageModalLayout} 
+                options={{ presentation: 'modal' }} 
+              />
+              <Stack.Screen 
+                name="boxaddmodal" 
+                component={BoxAddModalScreen} 
                 options={{ presentation: 'modal' }} 
               />
             </Stack.Group>
