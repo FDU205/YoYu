@@ -18,9 +18,9 @@ func UsersRegister(router *gin.RouterGroup) {
 func FollowsRegister(router *gin.RouterGroup) {
 	router.POST("/follow", Follow)
 	router.DELETE("/unfollow", UnFollow)
-	router.GET("/followlist/:page_num/:page_size", GetFollowList)
+	router.GET("/followlist", GetFollowList)
 	router.GET("/followcount", GetFollowCount)
-	router.GET("/fanslist/:page_num/:page_size", GetFansList)
+	router.GET("/fanslist", GetFansList)
 	router.GET("/fanscount", GetFansCount)
 }
 
@@ -94,8 +94,8 @@ func UnFollow(c *gin.Context) {
 
 // 获取关注列表
 func GetFollowList(c *gin.Context) {
-	page_num_str := c.Param("page_num")
-	page_size_str := c.Param("page_size")
+	page_num_str := c.Query("page_num")
+	page_size_str := c.Query("page_size")
 	if page_num_str == "" || page_size_str == "" {
 		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
 		return
@@ -135,8 +135,8 @@ func GetFollowCount(c *gin.Context) {
 
 // 获取粉丝列表
 func GetFansList(c *gin.Context) {
-	page_num_str := c.Param("page_num")
-	page_size_str := c.Param("page_size")
+	page_num_str := c.Query("page_num")
+	page_size_str := c.Query("page_size")
 	if page_num_str == "" || page_size_str == "" {
 		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
 		return

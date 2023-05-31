@@ -11,7 +11,7 @@ import (
 // 将Wall模块的功能注册进框架
 func WallRegister(router *gin.RouterGroup) {
 	router.POST("/create", Create)
-	router.GET("/:page_num/:page_size", Get)
+	router.GET("", Get)
 }
 
 // 创建表白信息
@@ -32,8 +32,8 @@ func Create(c *gin.Context) {
 
 // 返回今日所有表白信息
 func Get(c *gin.Context) {
-	page_num_str := c.Param("page_num")
-	page_size_str := c.Param("page_size")
+	page_num_str := c.Query("page_num")
+	page_size_str := c.Query("page_size")
 
 	if page_num_str == "" || page_size_str == "" {
 		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})

@@ -83,7 +83,7 @@ var WallRequestTests = []struct {
 	//---------------------   Testing for get   ---------------------
 	{
 		func(req *http.Request) {},
-		"/api/wall/1/1",
+		"/api/wall?page_num=1&page_size=1",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -92,7 +92,7 @@ var WallRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/wall/2/1",
+		"/api/wall?page_num=2&page_size=1",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -101,7 +101,7 @@ var WallRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/wall/1/2",
+		"/api/wall?page_num=1&page_size=2",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -110,7 +110,7 @@ var WallRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/wall/2/2",
+		"/api/wall?page_num=2&page_size=2",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -119,7 +119,7 @@ var WallRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/wall/3/3",
+		"/api/wall?page_num=3&page_size=3",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -128,7 +128,7 @@ var WallRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/wall/1/200",
+		"/api/wall?page_num=1&page_size=200",
 		"GET",
 		`{}`,
 		http.StatusOK,

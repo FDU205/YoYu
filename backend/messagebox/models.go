@@ -3,13 +3,16 @@ package messagebox
 import (
 	"YOYU/backend/database"
 	"YOYU/backend/users"
+
+	"gorm.io/gorm"
 )
 
 type MessageBox struct {
-	ID      uint       `gorm:"primary_key" json:"id"`
-	User    users.User `gorm:"ForeignKey:OwnerID" json:"-"`
-	OwnerID uint       `gorm:"column:owner_id; not null" json:"owner_id"`
-	Title   string     `gorm:"column:title; not null" json:"title"`
+	gorm.Model `json:"-"`
+	ID         uint       `gorm:"primary_key" json:"id"`
+	User       users.User `gorm:"ForeignKey:OwnerID" json:"-"`
+	OwnerID    uint       `gorm:"column:owner_id; not null" json:"owner_id"`
+	Title      string     `gorm:"column:title; not null" json:"title"`
 }
 
 // 创建提问箱
@@ -41,7 +44,7 @@ func SearchMessageBox(title string, ownerID uint, offset int, limit int) ([]Mess
 		query = query.Where("owner_id = ?", ownerID)
 	}
 
-	err := query.Order("id desc").Limit(limit).Offset(offset).Find(&messageBox).Error
+	err := query.Order("updated_at desc").Limit(limit).Offset(offset).Find(&messageBox).Error
 	return messageBox, err
 }
 
@@ -53,8 +56,8 @@ func DeleteMessageBoxByID(messageBoxID uint, ownerID uint) error {
 }
 
 // 根据提问箱ID更新提问箱
-func UpdateMessageBoxByID(messageBoxID uint, ownerID uint, title string) error {
+func UpdateMessageBoxByID(data interface{}) error {
 	db := database.GetDB()
-	err := db.Model(&MessageBox{}).Where("id = ? AND owner_id = ?", messageBoxID, ownerID).Update("title", title).Error
+	err := db.Save(data).Error
 	return err
 }

@@ -1,11 +1,42 @@
 package messagebox
 
 import (
+	"YOYU/backend/users"
+
 	"github.com/gin-gonic/gin"
 )
 
 type SearchSerializer struct {
-	MessageBoxes []MessageBox `json:"messageBoxes"`
+	c *gin.Context
+}
+
+type SearchIn struct {
+	ID       uint   `json:"id"`
+	OwnerID  uint   `json:"owner_id"`
+	Title    string `json:"title"`
+	Username string `json:"owner_name"`
+}
+
+type SearchResponse struct {
+	MessageBoxes []SearchIn `json:"messageBoxes"`
+}
+
+func (r *SearchSerializer) Response() SearchResponse {
+	myMessageBoxes := r.c.MustGet("messageBoxes").([]MessageBox)
+	mySearchIn := []SearchIn{}
+	for _, myMessageBox := range myMessageBoxes {
+		userModel, _ := users.GetUser(&users.User{ID: myMessageBox.OwnerID})
+		mySearchIn = append(mySearchIn, SearchIn{
+			ID:       myMessageBox.ID,
+			OwnerID:  myMessageBox.OwnerID,
+			Title:    myMessageBox.Title,
+			Username: userModel.Username,
+		})
+	}
+
+	return SearchResponse{
+		MessageBoxes: mySearchIn,
+	}
 }
 
 type GetSerializer struct {

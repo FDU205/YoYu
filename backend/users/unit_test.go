@@ -330,7 +330,7 @@ var FollowListRequestTests = []struct {
 }{
 	{
 		func(req *http.Request) {},
-		"/api/user/followlist/1/2",
+		"/api/user/followlist?page_num=1&page_size=1",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -339,7 +339,7 @@ var FollowListRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/user/fanslist/2/1",
+		"/api/user/fanslist?page_num=2&page_size=1",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -348,7 +348,7 @@ var FollowListRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
-		"/api/user/fanslist/2/6",
+		"/api/user/fanslist?page_num=2&page_size=6",
 		"GET",
 		`{}`,
 		http.StatusOK,
@@ -358,6 +358,7 @@ var FollowListRequestTests = []struct {
 }
 
 func ResetDB(db *gorm.DB) {
+	db.Exec("drop table if exists message_boxes")
 	db.Exec("drop table if exists walls")
 	db.Exec("drop table if exists followers")
 	db.Exec("drop table if exists users")

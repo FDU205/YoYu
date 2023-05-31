@@ -27,7 +27,7 @@ func MessageBoxDeleteByID(messageBoxID uint, ownerID uint) error {
 }
 
 // 根据ID更新提问箱
-func MessageBoxUpdateByID(messageBoxID uint, ownerID uint, title string) error {
-	err := UpdateMessageBoxByID(messageBoxID, ownerID, title)
+func MessageBoxUpdateByID(mB MessageBox) error {
+	err := UpdateMessageBoxByID(&mB)
 	return err
 }

@@ -32,7 +32,7 @@ var MessageBoxRequestTests = []struct {
 		"POST",
 		`{"username": "zzx1", "password": "123456"}`,
 		http.StatusOK,
-		`{"code":0,"data":{"username":"zzx1","token":"[a-zA-Z0-9-_.]{120}"},"err_msg":null}`,
+		`{"code":0,"data":{"username":"zzx1","id":1,"token":"[a-zA-Z0-9-_.]{120}"},"err_msg":null}`,
 		"注册成功",
 	},
 	{
@@ -41,7 +41,7 @@ var MessageBoxRequestTests = []struct {
 		"POST",
 		`{"title": "test1"}`,
 		http.StatusOK,
-		`{"code":0,"data":{"id":^[1-9]\d*$,"owner_id":^[1-9]\d*$,"title":"test1"},"err_msg":null}`,
+		`{"code":0,"data":{"id":1,"owner_id":1,"title":"test1"},"err_msg":null}`,
 		"创建成功",
 	},
 	{
@@ -50,7 +50,7 @@ var MessageBoxRequestTests = []struct {
 		"POST",
 		`{"title": "test2"}`,
 		http.StatusOK,
-		`{"code":0,"data":{"id":^[1-9]\d*$,"owner_id":^[1-9]\d*$,"title":"test2"},"err_msg":null}`,
+		`{"code":0,"data":{"id":2,"owner_id":1,"title":"test2"},"err_msg":null}`,
 		"创建成功",
 	},
 	{
@@ -59,77 +59,133 @@ var MessageBoxRequestTests = []struct {
 		"POST",
 		`{"title": "test3"}`,
 		http.StatusOK,
-		`{"code":0,"data":{"id":^[1-9]\d*$,"owner_id":^[1-9]\d*$,"title":"test3"},"err_msg":null}`,
+		`{"code":0,"data":{"id":3,"owner_id":1,"title":"test3"},"err_msg":null}`,
 		"创建成功",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/messagebox/create",
+		"/api/messageBox",
 		"POST",
+		`{"title": "test4"}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":4,"owner_id":1,"title":"test4"},"err_msg":null}`,
+		"创建成功",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBox",
+		"POST",
+		`{"title": "test5"}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":5,"owner_id":1,"title":"test5"},"err_msg":null}`,
+		"创建成功",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBox/3",
+		"DELETE",
 		`{}`,
-		http.StatusUnprocessableEntity,
-		`{"code":1,"err_msg":"参数错误"}`,
-		"创建失败，参数错误",
+		http.StatusOK,
+		`{"code":0,"data":null,"err_msg":null}`,
+		"删除提问箱",
 	},
 	//---------------------   Testing for get   ---------------------
 	{
 		func(req *http.Request) {},
-		"/api/messagebox/1/1",
+		"/api/messageBox/1",
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":3,"poster_id":1,"content":"test3","visibility":1}\]},"err_msg":null}`,
-		"获取帖子3",
+		`{"code":0,"data":{"id":1,"owner_id":1,"title":"test1","posts":\[\]},"err_msg":null}`,
+		"获取提问箱1",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/messagebox/2/1",
+		"/api/messageBox/3",
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":2,"poster_id":1,"content":"test2","visibility":1}\]},"err_msg":null}`,
-		"获取帖子2",
+		`{"code":1,"data":null,"err_msg":"找不到提问箱"}`,
+		"获取提问箱3",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/messagebox/1/2",
+		"/api/messageBoxes?page_num=1&page_size=1",
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":3,"poster_id":1,"content":"test3","visibility":1},{"id":2,"poster_id":1,"content":"test2","visibility":1}\]},"err_msg":null}`,
-		"获取帖子3-2",
+		`{"code":0,"data":{"messageBoxes":\[{"id":5,"owner_id":1,"title":"test5","owner_name":"zzx1"}\]},"err_msg":null}`,
+		"获取提问箱5",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/messagebox/2/2",
+		"/api/messageBoxes?page_num=2&page_size=2",
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[{"id":1,"poster_id":1,"content":"test1","visibility":1}\]},"err_msg":null}`,
-		"获取帖子1",
+		`{"code":0,"data":{"messageBoxes":\[{"id":2,"owner_id":1,"title":"test2","owner_name":"zzx1"},{"id":1,"owner_id":1,"title":"test1","owner_name":"zzx1"}\]},"err_msg":null}`,
+		"获取提问箱2-1",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/messagebox/3/3",
+		"/api/messageBoxes?page_num=2&page_size=6",
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"posts":\[\]},"err_msg":null}`,
-		"获取帖子3",
+		`{"code":0,"data":{"messageBoxes":\[\]},"err_msg":null}`,
+		"获取不到提问箱",
 	},
 	{
 		func(req *http.Request) {},
-		"/api/messagebox/1/200",
+		"/api/messageBoxes?page_num=1&page_size=1&title=test",
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":1,"data":null,"err_msg":"参数错误"}`,
-		"获取失败，参数错误",
+		`{"code":0,"data":{"messageBoxes":\[{"id":5,"owner_id":1,"title":"test5","owner_name":"zzx1"}\]},"err_msg":null}`,
+		"查找test提问箱",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBoxes?page_num=1&page_size=1&owner=1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"messageBoxes":\[{"id":5,"owner_id":1,"title":"test5","owner_name":"zzx1"}\]},"err_msg":null}`,
+		"找到用户1的提问箱",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBoxes?page_num=1&page_size=1&owner=2",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"messageBoxes":\[\]},"err_msg":null}`,
+		"找不到提问箱",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBox/1",
+		"PUT",
+		`{"title":"test10"}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":1,"owner_id":1,"title":"test10"},"err_msg":null}`,
+		"修改提问箱标题",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBox/1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":1,"owner_id":1,"title":"test10","posts":\[\]},"err_msg":null}`,
+		"获取提问箱1",
 	},
 }
 
 func ResetDB(db *gorm.DB) {
 	db.Exec("drop table if exists message_boxes")
+	db.Exec("drop table if exists walls")
+	db.Exec("drop table if exists followers")
 	db.Exec("drop table if exists users")
 	db.Commit()
 }
@@ -156,9 +212,8 @@ func TestMessageBox(t *testing.T) {
 	users.UsersRegister(userG)
 
 	// 表白墙模块
-	messageBoxG := v1.Group("/messagebox")
-	messageBoxG.Use(users.AuthMiddleware(true))
-	MessageBoxRegister(messageBoxG)
+	v1.Use(users.AuthMiddleware(true))
+	MessageBoxRegister(v1)
 
 	var token string
 	for i, testData := range MessageBoxRequestTests {
@@ -177,7 +232,7 @@ func TestMessageBox(t *testing.T) {
 		asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
 		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 		if i == 0 {
-			token = w.Body.String()[45:165]
+			token = w.Body.String()[52:172]
 		}
 	}
 }

@@ -10,7 +10,7 @@ import (
 // 将MessageBox模块的功能注册进框架
 func MessageBoxRegister(router *gin.RouterGroup) {
 	router.POST("/messageBox", Create)
-	router.GET("/messageBoxes/:page_num/:page_size/:title/:owner", Search)
+	router.GET("/messageBoxes", Search)
 	router.GET("/messageBox/:id", Get)
 	router.PUT("/messageBox/:id", Update)
 	router.DELETE("/messageBox/:id", Delete)
@@ -44,30 +44,34 @@ func Get(c *gin.Context) {
 
 	messageBox, err := MessageBoxGetByID(uint(id))
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": err.Error(), "data": nil})
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "找不到提问箱", "data": nil})
 		return
 	}
 
 	c.Set("messageBoxModel", messageBox)
 	//TODO: 获取posts
-	posts := [...]uint{0}
+	posts := []uint{}
 	c.Set("posts", posts)
 
 	serializer := GetSerializer{c}
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer})
+	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()})
 }
 
 // 查询提问箱
 func Search(c *gin.Context) {
-	title := c.Param("title")
-	ownerID_str := c.Param("owner")
-	page_num_str := c.Param("page_num")
-	page_size_str := c.Param("page_size")
+	title := c.Query("title")
+	ownerID_str := c.Query("owner")
+	page_num_str := c.Query("page_num")
+	page_size_str := c.Query("page_size")
 
-	ownerID, err := strconv.Atoi(ownerID_str)
-	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
-		return
+	var ownerID int
+	if ownerID_str != "" {
+		var err error
+		ownerID, err = strconv.Atoi(ownerID_str)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "data": nil})
+			return
+		}
 	}
 
 	page_num, err := strconv.Atoi(page_num_str)
@@ -89,8 +93,9 @@ func Search(c *gin.Context) {
 		return
 	}
 
-	serializer := SearchSerializer{messageBoxes}
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer})
+	c.Set("messageBoxes", messageBoxes)
+	serializer := SearchSerializer{c}
+	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()})
 }
 
 // 根据提问箱ID删除提问箱
@@ -127,7 +132,8 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	if err := MessageBoxUpdateByID(uint(id), messageBoxValidator.OwnerID, messageBoxValidator.Title); err != nil {
+	messageBoxValidator.MessageBoxModel.ID = uint(id)
+	if err := MessageBoxUpdateByID(messageBoxValidator.MessageBoxModel); err != nil {
 		c.JSON(http.StatusOK, gin.H{"code": 2, "err_msg": "更新失败", "data": nil})
 		return
 	}
