@@ -6,4 +6,11 @@ type wallpost = {
     visibility:number,
 }
 
-export type {wallpost};
+type messageBoxinfo = {
+    id:number, 
+    owner_id:number,
+    title:string,
+    owner_name:string,
+}
+
+export type {wallpost, messageBoxinfo};

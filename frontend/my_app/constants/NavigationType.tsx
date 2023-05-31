@@ -6,6 +6,7 @@ type NavigationParamList = {
     register : { setisLogin : Function };
     tabs : undefined;
     tabwall: undefined;
+    boxes: undefined;
     modal : undefined;
     walladdmodal : undefined;
     homepage : { userid : number, username : string };

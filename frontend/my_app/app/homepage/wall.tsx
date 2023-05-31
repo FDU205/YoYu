@@ -4,6 +4,8 @@ import Card from '../../components/Card';
 import { getData } from '../../components/Api';
 import { SetStateAction, useEffect, useState } from 'react';
 import type { wallpost } from '../../constants/DataType';
+import { NavigationParamList, Props } from '../../constants/NavigationType';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import g from '../globaldata';
 
 const TEST_DATA = [
@@ -45,18 +47,28 @@ const TEST_DATA = [
   },
 ];
 
-const onPress = () => {
+const onPress = (userid: number, username: string, visibility: number, navigation: NativeStackNavigationProp<NavigationParamList, "tabwall", undefined>) => {
+  if(visibility == 1) {
+    if(userid == g.userid) {
+      navigation.navigate(
+        'homepage',{userid: userid, username: username},
+      );
+    } else {
+      navigation.navigate(
+        'homepagemodal',{userid: userid, username: username},
+      );
+    }
+  }
   return;
 };
 
 const PAGE_SIZE = 10;
 
-export default function TabWallScreen() {
+export default function TabWallScreen({ route, navigation }: Props<'tabwall'>) {
   const [data, setdata] = useState(new Array<wallpost>(0));
-  let page_num = 1;
-  let token = "";
+  let page_num = 2;
   const getNextWall = () => {
-    getData("/wall?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),token).then(
+    getData("/wall?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),g.token).then(
       ret => {
         if(ret.code != 0) {
           throw new Error(ret.err_msg);
@@ -65,7 +77,9 @@ export default function TabWallScreen() {
           data.push.apply(data, temp);
         }
       }
-    ).catch(
+    ).then(()=>{
+      page_num++;
+    }).catch(
       err => {
         failToast(err+" 刷新失败");
       }
@@ -96,7 +110,7 @@ export default function TabWallScreen() {
         style={styles.flat}
         data={data}
         renderItem={({ item }) => 
-          <Card title={item.poster_name} text={item.content} onPress={onPress}/>
+          <Card title={item.poster_name} text={item.content} onPress={() => {onPress(item.poster_id, item.poster_name, item.visibility, navigation)}}/>
         }
         refreshing={false}
         keyExtractor={(item) => item.id.toString()}

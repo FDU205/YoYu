@@ -4,7 +4,7 @@ import { Button, Pressable, useColorScheme } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabOneScreen from './one'
 import TabWallScreen from './wall';
-import TabThreeScreen from './three';
+import BoxesScreen from './boxes';
 import HomePageLayout from '../homepage/_latout';
 
 import Colors from '../../constants/Colors';
@@ -25,17 +25,17 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
-        component={TabOneScreen}
+        name="boxes"
+        component={BoxesScreen}
         options={{
-          title: 'Tab Oneeeee',
-          tabBarIcon: ({ color }) => <Icon name="code" color={color} />,
+          title: '提问箱',
+          tabBarIcon: ({ color }) => <Icon name="envelope-square" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="info-circle"
+                    name="plus-circle"
                     size={25}
                     color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
@@ -74,7 +74,7 @@ export default function TabLayout() {
         options={{
           title: '我的主页',
           tabBarLabel: '我的',
-          tabBarIcon: ({ color }) => (<Icon name="code" color={color} />),
+          tabBarIcon: ({ color }) => (<Icon name="user-circle-o" color={color} />),
           headerRight: () => (
             <Button
               title="退出登录"
@@ -82,7 +82,7 @@ export default function TabLayout() {
             />
           ),
         }}
-        initialParams={{ userid: g.userid, username: g.username }}
+        initialParams={{ userid: g.userid, username: g.username.slice(0) }}
       />
     </Tabs.Navigator>
   );
