@@ -146,6 +146,15 @@ var MessageBoxRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
+		"/api/messageBoxes?page_num=1&page_size=1&title=zzx",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":{"messageBoxes":\[{"id":5,"owner_id":1,"title":"test5","owner_name":"zzx1"}\]},"err_msg":null}`,
+		"查找test提问箱",
+	},
+	{
+		func(req *http.Request) {},
 		"/api/messageBoxes?page_num=1&page_size=1&owner=1",
 		"GET",
 		`{}`,

@@ -18,6 +18,7 @@ func UsersRegister(router *gin.RouterGroup) {
 func FollowsRegister(router *gin.RouterGroup) {
 	router.POST("/follow", Follow)
 	router.DELETE("/unfollow", UnFollow)
+	router.GET("/isfollow", IsFollow)
 	router.GET("/followlist", GetFollowList)
 	router.GET("/followcount", GetFollowCount)
 	router.GET("/fanslist", GetFansList)
@@ -90,6 +91,22 @@ func UnFollow(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil})
+}
+
+// 是否关注
+func IsFollow(c *gin.Context) {
+	followID_str := c.Query("follow_id")
+
+	followID, err := strconv.Atoi(followID_str)
+	if err != nil || followID < 1 {
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "yes": nil})
+		return
+	}
+
+	userID := c.MustGet("userID").(uint)
+
+	yes := IsFollowing(&Follower{FollowingID: uint(followID), FollowedByID: userID})
+	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "yes": yes})
 }
 
 // 获取关注列表

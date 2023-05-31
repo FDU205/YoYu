@@ -37,14 +37,14 @@ func SearchMessageBox(title string, ownerID uint, offset int, limit int) ([]Mess
 	query := db
 
 	if title != "" {
-		query = query.Where("title LIKE ?", "%"+title+"%")
+		query = query.Where("message_boxes.title LIKE ? or User.Username LIKE ?", "%"+title+"%", "%"+title+"%")
 	}
 
 	if ownerID != 0 {
-		query = query.Where("owner_id = ?", ownerID)
+		query = query.Where("message_boxes.owner_id = ?", ownerID)
 	}
 
-	err := query.Order("updated_at desc").Limit(limit).Offset(offset).Find(&messageBox).Error
+	err := query.Joins("User").Order("updated_at desc").Limit(limit).Offset(offset).Find(&messageBox).Error
 	return messageBox, err
 }
 

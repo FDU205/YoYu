@@ -71,6 +71,14 @@ func UnFollowing(data interface{}) error {
 	return err
 }
 
+// u是否关注v
+func IsFollowing(data interface{}) bool {
+	db := database.GetDB()
+	var follow Follower
+	db.Where(data).First(&follow)
+	return follow.ID != 0
+}
+
 // 获取关注列表
 func FollowingsList(id uint, offset int, limit int) []User {
 	db := database.GetDB()

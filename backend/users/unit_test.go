@@ -292,6 +292,15 @@ var FollowCountRequestTests = []struct {
 	},
 	{
 		func(req *http.Request) {},
+		"/api/user/isfollow?follow_id=1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"err_msg":null,"yes":true}`,
+		"关注数量",
+	},
+	{
+		func(req *http.Request) {},
 		"/api/user/fanscount",
 		"GET",
 		`{}`,
@@ -315,6 +324,15 @@ var FollowCountRequestTests = []struct {
 		`{}`,
 		http.StatusOK,
 		`{"code":0,"count":0,"err_msg":null}`,
+		"关注数量",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/user/isfollow?follow_id=1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"err_msg":null,"yes":false}`,
 		"关注数量",
 	},
 }
@@ -358,6 +376,8 @@ var FollowListRequestTests = []struct {
 }
 
 func ResetDB(db *gorm.DB) {
+	db.Exec("drop table if exists channels")
+	db.Exec("drop table if exists posts")
 	db.Exec("drop table if exists message_boxes")
 	db.Exec("drop table if exists walls")
 	db.Exec("drop table if exists followers")
@@ -427,7 +447,7 @@ func TestUsers(t *testing.T) {
 
 	// 查看数量
 	for id := 0; id < 5; id = id + 1 {
-		for _, testData := range FollowCountRequestTests[0:2] {
+		for _, testData := range FollowCountRequestTests[0:3] {
 			bodyData := testData.bodyData
 			req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))
 			req.Header.Set("Content-Type", "application/json")
@@ -457,7 +477,6 @@ func TestUsers(t *testing.T) {
 			w := httptest.NewRecorder()
 			r.ServeHTTP(w, req)
 			asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
-			println(w.Body.String())
 			//asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+w.Body.String())
 		}
 	}
@@ -482,7 +501,7 @@ func TestUsers(t *testing.T) {
 
 	// 查看数量
 	for id := 0; id < 5; id = id + 1 {
-		for _, testData := range FollowCountRequestTests[2:] {
+		for _, testData := range FollowCountRequestTests[3:] {
 			bodyData := testData.bodyData
 			req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))
 			req.Header.Set("Content-Type", "application/json")
