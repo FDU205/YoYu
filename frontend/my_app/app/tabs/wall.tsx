@@ -1,8 +1,10 @@
-import { FlatList, StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../../components/EditScreenInfo';
+import { Alert, FlatList, StyleSheet } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import Card from '../../components/Card';
+import { getData } from '../../components/Api';
+import { storage } from '../../components/Storage';
+import { SetStateAction, useEffect, useState } from 'react';
+import type { wallpost } from '../../constants/DataType';
 
 const TEST_DATA = [
   {
@@ -47,21 +49,71 @@ const onPress = () => {
   return;
 };
 
+const PAGE_SIZE = 10;
+
 export default function TabWallScreen() {
+  const [data, setdata] = useState(new Array<wallpost>(0));
+  let page_num = 1;
+  let token = "";
+  const getNextWall = () => {
+    console.log(1);
+    getData("/wall?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),token).then(
+      ret => {
+        if(ret.code != 0) {
+          throw new Error(ret.err_msg);
+        } else {
+          let temp = ret.data.posts;
+          data.push.apply(data, temp);
+        }
+      }
+    ).catch(
+      err => {
+        failToast(err+" 刷新失败");
+      }
+    )
+  }
+  const getNewWall = (setdata: { (value: SetStateAction<wallpost[]>): void; (arg0: any): void; }) => {
+    if(token == ""){
+      storage.load("token", (ret)=>{token=ret});
+    }
+    getData("/wall?page_num=1&page_size="+PAGE_SIZE.toString(),token).then(
+      ret => {
+        if(ret.code != 0) {
+          throw new Error(ret.err_msg);
+        } else {
+          setdata(ret.data.posts);
+        }
+      }
+    ).catch(
+      err => {
+        failToast(err+" 刷新失败");
+      }
+    )
+  };
+  useEffect(() => {getNewWall(setdata)}, []);
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{getDateNow()}</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <FlatList 
         style={styles.flat}
-        data={TEST_DATA}
+        data={data}
         renderItem={({ item }) => 
-          <Card title={item.id} text={item.content} onPress={onPress}/>
+          <Card title={item.poster_name} text={item.content} onPress={onPress}/>
         }
-        keyExtractor={(item) => item.id}
+        refreshing={false}
+        keyExtractor={(item) => item.id.toString()}
+        onRefresh={() => {getNewWall(setdata)}}
+        onEndReachedThreshold={0.01}
+        onEndReached={() =>{getNextWall()}}
       />
     </View>
   );
+}
+
+function failToast(msg: string) {
+  Alert.alert(msg);
 }
 
 function getDateNow():string {
