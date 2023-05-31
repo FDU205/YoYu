@@ -13,4 +13,14 @@ type messageBoxinfo = {
     owner_name:string,
 }
 
-export type {wallpost, messageBoxinfo};
+type follows = {
+    user_id:number, 
+    username:string, 
+}
+
+type fans = {
+    user_id:number, 
+    username:string, 
+}
+
+export type {wallpost, messageBoxinfo, follows, fans};

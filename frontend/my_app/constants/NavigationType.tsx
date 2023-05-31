@@ -10,6 +10,8 @@ type NavigationParamList = {
     modal : undefined;
     walladdmodal : undefined;
     boxaddmodal : undefined;
+    followmodal : undefined;
+    fansmodal : undefined;
     homepage : { userid : number, username : string };
     homepagemodal : { userid : number, username : string };
 };

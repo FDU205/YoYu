@@ -10,6 +10,8 @@ import TabLayout from './tabs/_layout';
 import HomePageModalLayout from './homepagemodal';
 import ModalScreen from './modal';
 import WallAddModalScreen from './walladdmodal';
+import FollowScreen from './followmodal';
+import FansScreen from './fansmodal';
 import { storage } from '../components/Storage';
 import type { NavigationParamList, Props } from '../constants/NavigationType';
 import { LogBox } from 'react-native';
@@ -113,6 +115,16 @@ function RootLayoutNav() {
               <Stack.Screen 
                 name="boxaddmodal" 
                 component={BoxAddModalScreen} 
+                options={{ presentation: 'modal' }} 
+              />
+              <Stack.Screen 
+                name="followmodal" 
+                component={FollowScreen} 
+                options={{ presentation: 'modal' }} 
+              />
+              <Stack.Screen 
+                name="fansmodal" 
+                component={FansScreen} 
                 options={{ presentation: 'modal' }} 
               />
             </Stack.Group>
