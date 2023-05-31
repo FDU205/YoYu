@@ -7,11 +7,13 @@ import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import UserLayout from './user/_layout'
 import TabLayout from './tabs/_layout';
+import HomePageLayout from './homepage/_latout';
 import ModalScreen from './modal';
 import WallAddModalScreen from './walladdmodal';
 import { storage } from '../components/Storage';
 import type { NavigationParamList, Props } from '../constants/NavigationType';
 import { LogBox } from 'react-native';
+import g from './globaldata';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -50,11 +52,15 @@ function RootLayoutNav() {
   const [isLoggedin, setisLoggedin] = useState(false);
 
   const setisLogin =(t: boolean | ((prevState: boolean) => boolean)) => {setisLoggedin(t)};
-  let token = null;
-  storage.load("token", (ret)=>{token=ret});
-  if(token) {
-    setisLoggedin(true);
-  }
+  storage.load("token", (ret)=>{g.token=ret});
+  storage.load("username", (ret)=>{g.username=ret});
+  storage.load("userid", (ret)=>{g.userid=ret});
+  useEffect(() => {()=>{
+    if(g.token != null) {
+      setisLoggedin(true);
+    }
+  }}, []);
+  
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator>
@@ -84,6 +90,10 @@ function RootLayoutNav() {
                 name="walladdmodal" 
                 component={WallAddModalScreen} 
                 options={{ presentation: 'modal' }} 
+              />
+              <Stack.Screen
+                name="homepage"
+                component={HomePageLayout}
               />
             </Stack.Group>
           )

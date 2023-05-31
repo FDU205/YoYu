@@ -7,6 +7,7 @@ type NavigationParamList = {
     tabs : undefined;
     modal : undefined;
     walladdmodal : undefined;
+    homepage : { userid : number, username : string };
 };
 
 type Props<T extends keyof NavigationParamList> = NativeStackScreenProps<NavigationParamList, T>;

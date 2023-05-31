@@ -5,9 +5,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabOneScreen from './one'
 import TabWallScreen from './wall';
 import TabThreeScreen from './three';
+import HomePageLayout from '../homepage/_latout';
 
 import Colors from '../../constants/Colors';
 import { Icon } from '../../components/FontAwesomeIcon';
+import { Props } from '../../constants/NavigationType';
+import g from '../globaldata';
 
 const Tabs = createBottomTabNavigator();
 
@@ -65,12 +68,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="three"
-        component={TabThreeScreen}
+        name="homepage"
+        component={HomePageLayout}
         options={{
-          tabBarLabel: 'Tab Three',
+          tabBarLabel: '我的',
           tabBarIcon: ({ color }) => (<Icon name="code" color={color} />),
         }}
+        initialParams={{ userid: g.userid, username: g.username  }}
       />
     </Tabs.Navigator>
   );

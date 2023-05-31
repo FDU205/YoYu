@@ -12,16 +12,13 @@ import { storage } from '../components/Storage';
 import { postData } from '../components/Api';
 import { NavigationParamList, Props } from '../constants/NavigationType';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import g from './globaldata';
 
 export default function WallAddModalScreen({ route, navigation }: Props<'walladdmodal'>) {
-  const getUsername = () => {
-    storage.load("username", setUsername);
-  };
   const colorScheme = useColorScheme();
   const [text, onChangeText] = useState('');
   const [visibility, onChangeVisibility] = useState(true);
-  const [username, setUsername] = useState('');
-  getUsername();
+
   return (
     <View style={styles.container}>
       <View style={{ flexDirection:'row', alignSelf:'flex-end'}}>
@@ -60,7 +57,7 @@ export default function WallAddModalScreen({ route, navigation }: Props<'walladd
       <Text style={styles.text}>
           预览：
       </Text>
-      <Card title={!visibility ? "匿名用户":username} text={text} onPress={() => {Keyboard.dismiss()}}/>
+      <Card title={!visibility ? "匿名用户":g.username} text={text} onPress={() => {Keyboard.dismiss()}}/>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
