@@ -50,5 +50,5 @@ func main() {
 	v1.Use(users.AuthMiddleware(true))
 	posts.PostRegister(v1)
 
-	r.Run("127.0.0.1:8080")
+	r.Run("192.168.1.109:8080")
 }

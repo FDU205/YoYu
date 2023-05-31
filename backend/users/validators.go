@@ -33,7 +33,7 @@ func NewRegisterValidator() RegisterValidator {
 
 // 登陆时用的Validator
 type LoginValidator struct {
-	Username  string `json:"username" binding:"required,alphanum,min=1,max=32"`
+	Username  string `json:"username" binding:"required,min=1,max=32"`
 	Password  string `json:"password" binding:"required,min=1,max=255"`
 	UserModel User   `json:"-"`
 }

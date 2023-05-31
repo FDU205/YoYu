@@ -44,20 +44,23 @@ type GetSerializer struct {
 }
 
 type GetResponse struct {
-	ID      uint   `json:"id"`
-	OwnerID uint   `json:"owner_id"`
-	Title   string `json:"title"`
-	Posts   []uint `json:"posts"`
+	ID        uint   `json:"id"`
+	OwnerID   uint   `json:"owner_id"`
+	OwnerName string `json:"owner_name"`
+	Title     string `json:"title"`
+	Posts     []uint `json:"posts"`
 }
 
 func (r *GetSerializer) Response() GetResponse {
 	myMessageBox := r.c.MustGet("messageBoxModel").(MessageBox)
 	myPosts := r.c.MustGet("posts").([]uint)
+	user, _ := users.GetUser(&users.User{ID: myMessageBox.OwnerID})
 	ret := GetResponse{
-		ID:      myMessageBox.ID,
-		OwnerID: myMessageBox.OwnerID,
-		Title:   myMessageBox.Title,
-		Posts:   myPosts,
+		ID:        myMessageBox.ID,
+		OwnerID:   myMessageBox.OwnerID,
+		OwnerName: user.Username,
+		Title:     myMessageBox.Title,
+		Posts:     myPosts,
 	}
 	return ret
 }

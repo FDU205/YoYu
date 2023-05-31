@@ -96,7 +96,7 @@ var MessageBoxRequestTests = []struct {
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"id":1,"owner_id":1,"title":"test1","posts":\[\]},"err_msg":null}`,
+		`{"code":0,"data":{"id":1,"owner_id":1,"owner_name":"zzx1","title":"test1","posts":\[\]},"err_msg":null}`,
 		"获取提问箱1",
 	},
 	{
@@ -177,12 +177,14 @@ var MessageBoxRequestTests = []struct {
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"id":1,"owner_id":1,"title":"test10","posts":\[\]},"err_msg":null}`,
+		`{"code":0,"data":{"id":1,"owner_id":1,"owner_name":"zzx1","title":"test10","posts":\[\]},"err_msg":null}`,
 		"获取提问箱1",
 	},
 }
 
 func ResetDB(db *gorm.DB) {
+	db.Exec("drop table if exists channels")
+	db.Exec("drop table if exists posts")
 	db.Exec("drop table if exists message_boxes")
 	db.Exec("drop table if exists walls")
 	db.Exec("drop table if exists followers")

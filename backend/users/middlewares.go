@@ -3,6 +3,7 @@ package users
 import (
 	"YOYU/backend/common"
 	"YOYU/backend/database"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -44,18 +45,11 @@ func AuthMiddleware(auto401 bool) gin.HandlerFunc {
 		})
 		if err != nil || !token.Valid {
 			if auto401 {
-				c.AbortWithError(http.StatusUnauthorized, err)
+				c.AbortWithError(http.StatusUnauthorized, errors.New("授权失败或授权已过期"))
 			}
 			return
 		}
 		claims := token.Claims.(jwt.MapClaims)
-		if err != nil {
-			if auto401 {
-				c.AbortWithError(http.StatusUnauthorized, err)
-			}
-			return
-		} else {
-			c.Set("userID", uint(claims["userID"].(float64)))
-		}
+		c.Set("userID", uint(claims["userID"].(float64)))
 	}
 }
