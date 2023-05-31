@@ -3,7 +3,7 @@ import { Link } from 'expo-router';
 import { Pressable, useColorScheme } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabOneScreen from './one'
-import TabTwoScreen from './two';
+import TabWallScreen from './wall';
 import TabThreeScreen from './three';
 
 import Colors from '../../constants/Colors';
@@ -18,7 +18,9 @@ export default function TabLayout() {
     <Tabs.Navigator
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-      }}>
+        headerTitleAlign:'center'
+      }}
+    >
       <Tabs.Screen
         name="index"
         component={TabOneScreen}
@@ -42,11 +44,25 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
-        component={TabTwoScreen}
+        name="wall"
+        component={TabWallScreen}
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <Icon name="code" color={color} />,
+          title: '表白墙',
+          tabBarIcon: ({ color }) => <Icon name="heart-o" color={color} />,
+          headerRight: () => (
+            <Link href="/walladdmodal" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="plus-circle"
+                    size={25}
+                    color={Colors[colorScheme ?? 'light'].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
         }}
       />
       <Tabs.Screen

@@ -1,0 +1,66 @@
+import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, TextInput, StyleSheet, View } from 'react-native';
+
+interface ILongTextBoxProps {
+    placeholder: string;
+    onSubmit: () => void;
+    onChangeOutterText: (text: string) => void;
+}
+
+const LongTextBox: React.FC<ILongTextBoxProps> = ({
+    placeholder,
+    onSubmit,
+    onChangeOutterText,
+    ...rest
+}) => {
+    const [text, onChangeText] = useState('');
+    return(
+
+                <KeyboardAvoidingView 
+                    style={styles.container}
+                    behavior='padding' 
+                    keyboardVerticalOffset={90}
+                > 
+                    <TextInput 
+                    placeholder={placeholder}
+                    defaultValue={text}
+                    style={styles.input} 
+                    multiline={true} 
+                    onChangeText={ text => {
+                        onChangeText(text);
+                        onChangeOutterText(text);
+                    }}
+                    /> 
+                </KeyboardAvoidingView>
+
+        
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        alignItems:'center',
+        borderStyle: 'solid',
+        borderColor: 'white',
+        backgroundColor: 'rgba(255,255,255,1)',
+        borderWidth:1,
+        marginTop: 10,
+        marginHorizontal:30,
+        borderRadius:20,
+        shadowOffset: {width: 0, height: 3}, // 阴影偏移量
+        shadowRadius: 6, // 阴影模糊半径
+        shadowOpacity: 0.2, // 阴影不透明度
+        shadowColor: '#5c5c5c', // 设置阴影色
+        padding:0,
+    },
+    input: {
+        alignSelf:'center',
+        borderWidth:0,
+        borderColor:'#666',
+        textAlign:'left',
+        textAlignVertical:'top',
+        fontSize: 20,
+    }
+});
+
+export default LongTextBox;

@@ -8,8 +8,15 @@ import { useColorScheme } from 'react-native';
 import UserLayout from './user/_layout'
 import TabLayout from './tabs/_layout';
 import ModalScreen from './modal';
+import WallAddModalScreen from './walladdmodal';
 import { storage } from '../components/Storage';
 import type { NavigationParamList, Props } from '../constants/NavigationType';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+  'The navigation state parsed from the URL contains routes not present in the root navigator.',
+]);
 
 const Stack = createNativeStackNavigator<NavigationParamList>();
 
@@ -69,6 +76,11 @@ function RootLayoutNav() {
               <Stack.Screen 
                 name="modal" 
                 component={ModalScreen} 
+                options={{ presentation: 'modal' }} 
+              />
+              <Stack.Screen 
+                name="walladdmodal" 
+                component={WallAddModalScreen} 
                 options={{ presentation: 'modal' }} 
               />
             </Stack.Group>

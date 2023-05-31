@@ -1,4 +1,4 @@
-const rootUrl = 'https://localhost:3000/api';
+const rootUrl = 'http://192.168.1.105:4523/m1/2465803-0-default/api';
 
 async function getData(url: string, token = ""): Promise<any> {
   url = rootUrl + url;
