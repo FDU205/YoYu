@@ -22,3 +22,33 @@ func UserLogin(userModel User) (User, error) {
 	}
 	return findUser, nil
 }
+
+func UserFollow(followModel Follower) error {
+	return Following(&followModel)
+}
+
+func UserUnFollow(followModel Follower) error {
+	return UnFollowing(&followModel)
+}
+
+func FollowListGet(id uint, pageNum int, pageSize int) []User {
+	offset := (pageNum - 1) * pageSize
+	limit := pageSize
+	user := FollowingsList(id, offset, limit)
+	return user
+}
+
+func FollowCountGet(id uint) (int64, error) {
+	return FollowingCount(id)
+}
+
+func FansListGet(id uint, pageNum int, pageSize int) []User {
+	offset := (pageNum - 1) * pageSize
+	limit := pageSize
+	user := FansList(id, offset, limit)
+	return user
+}
+
+func FansCountGet(id uint) (int64, error) {
+	return FansCount(id)
+}

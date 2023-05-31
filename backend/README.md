@@ -14,3 +14,9 @@
 
 数据模型
 Post 添加 message_box_id(integer) poster_id(integer)
+
+TODO:
+帖子详情增加返回名字
+用户登陆注册增加返回信息
+增加创建channel功能
+增加关注功能

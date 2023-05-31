@@ -48,7 +48,7 @@ func SearchMessageBox(title string, ownerID uint, offset int, limit int) ([]Mess
 // 根据提问箱ID删除提问箱
 func DeleteMessageBoxByID(messageBoxID uint, ownerID uint) error {
 	db := database.GetDB()
-	err := db.Where("id = ? AND owner_id = ?", messageBoxID, ownerID).Delete(MessageBox{}).Error
+	err := db.Where("id = ? AND owner_id = ?", messageBoxID, ownerID).Delete(&MessageBox{}).Error
 	return err
 }
 

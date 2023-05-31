@@ -23,7 +23,7 @@ func Create(c *gin.Context) {
 	}
 
 	if err := WallCreate(&wallValidator.WallModel); err != nil {
-		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": err.Error(), "data": nil})
+		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": err.Error()})
 		return
 	}
 
