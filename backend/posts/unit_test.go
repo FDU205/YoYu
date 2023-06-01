@@ -3,6 +3,7 @@ package posts
 import (
 	"YOYU/backend/database"
 	"YOYU/backend/messagebox"
+	"YOYU/backend/middlewares"
 	"YOYU/backend/users"
 	"bytes"
 	"testing"
@@ -201,7 +202,7 @@ var ChannelRequestTests = []struct {
 		"GET",
 		`{}`,
 		http.StatusOK,
-		`{"code":0,"data":{"id":2,"post_id":2,"post_name":"匿名用户","content":"2","visibility":2,"message_box_id":1,"threads":\[{"id":1,"post_id":2,"content":"回答","type":2},{"id":2,"post_id":2,"content":"追问","type":1}\],"channels":\[\]},"err_msg":null}`,
+		`{"code":0,"data":{"id":2,"poster_id":2,"poster_name":"匿名用户","content":"2","visibility":2,"message_box_id":1,"threads":\[{"id":1,"post_id":2,"content":"回答","type":2},{"id":2,"post_id":2,"content":"追问","type":1}\],"channels":\[\]},"err_msg":null}`,
 		"查帖子2",
 	},
 	{
@@ -254,15 +255,15 @@ func TestPosts(t *testing.T) {
 	v1 := r.Group("/api")
 	// 用户模块
 	userG := v1.Group("/user")
-	userG.Use(users.AuthMiddleware(false))
+	userG.Use(middlewares.AuthMiddleware(false))
 	users.UsersRegister(userG)
 
 	// 提问箱模块
-	v1.Use(users.AuthMiddleware(true))
+	v1.Use(middlewares.AuthMiddleware(true))
 	messagebox.MessageBoxRegister(v1)
 
 	// 帖子模块
-	v1.Use(users.AuthMiddleware(true))
+	v1.Use(middlewares.AuthMiddleware(true))
 	PostRegister(v1)
 
 	// 注册

@@ -2,6 +2,7 @@ package wall
 
 import (
 	"YOYU/backend/database"
+	"YOYU/backend/middlewares"
 	"YOYU/backend/users"
 	"bytes"
 	"testing"
@@ -174,12 +175,12 @@ func TestWalls(t *testing.T) {
 	v1 := r.Group("/api")
 	// 用户模块
 	userG := v1.Group("/user")
-	userG.Use(users.AuthMiddleware(false))
+	userG.Use(middlewares.AuthMiddleware(false))
 	users.UsersRegister(userG)
 
 	// 表白墙模块
 	wallG := v1.Group("/wall")
-	wallG.Use(users.AuthMiddleware(true))
+	wallG.Use(middlewares.AuthMiddleware(true))
 	WallRegister(wallG)
 
 	var token string

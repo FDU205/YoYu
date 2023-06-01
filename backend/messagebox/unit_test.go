@@ -2,6 +2,7 @@ package messagebox
 
 import (
 	"YOYU/backend/database"
+	"YOYU/backend/middlewares"
 	"YOYU/backend/users"
 	"bytes"
 	"testing"
@@ -219,11 +220,11 @@ func TestMessageBox(t *testing.T) {
 	v1 := r.Group("/api")
 	// 用户模块
 	userG := v1.Group("/user")
-	userG.Use(users.AuthMiddleware(false))
+	userG.Use(middlewares.AuthMiddleware(false))
 	users.UsersRegister(userG)
 
 	// 提问箱模块
-	v1.Use(users.AuthMiddleware(true))
+	v1.Use(middlewares.AuthMiddleware(true))
 	MessageBoxRegister(v1)
 
 	var token string

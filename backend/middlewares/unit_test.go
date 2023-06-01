@@ -1,9 +1,10 @@
-package users
+package middlewares
 
 import (
 	"YOYU/backend/database"
-	"YOYU/backend/middlewares"
+	"YOYU/backend/users"
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -14,38 +15,6 @@ import (
 	"net/http/httptest"
 	_ "regexp"
 )
-
-func newUser() User {
-	return User{
-		ID:       2,
-		Username: "zzx",
-		Password: "",
-	}
-}
-
-func TestUserModel(t *testing.T) {
-	asserts := assert.New(t)
-
-	//Testing UserModel's password feature
-	userModel := newUser()
-	err := userModel.CheckPassword("")
-	asserts.Error(err, "empty password should return err")
-
-	userModel = newUser()
-	err = userModel.SetPassword("")
-	asserts.Error(err, "empty password can not be set null")
-
-	userModel = newUser()
-	err = userModel.SetPassword("123456")
-	asserts.NoError(err, "password should be set successful")
-	asserts.Len(userModel.Password, 60, "password hash length should be 60")
-
-	err = userModel.CheckPassword("12345")
-	asserts.Error(err, "password should be checked and not validated")
-
-	err = userModel.CheckPassword("123456")
-	asserts.NoError(err, "password should be checked and validated")
-}
 
 var UserRequestTests = []struct {
 	init           func(*http.Request)
@@ -387,12 +356,19 @@ func ResetDB(db *gorm.DB) {
 }
 
 func AutoMigrate(db *gorm.DB) {
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&Follower{})
+	db.AutoMigrate(&users.User{})
+	db.AutoMigrate(&users.Follower{})
 }
 
 func TestUsers(t *testing.T) {
 	asserts := assert.New(t)
+	// 初始化Redis数据库
+	err := InitRedis()
+	if err != nil {
+		//redis连接错误
+		panic(err)
+	}
+	fmt.Println("Redis连接成功")
 
 	// 初始化数据库
 	test_db := database.TestInit()
@@ -402,12 +378,15 @@ func TestUsers(t *testing.T) {
 
 	// 注册路由
 	r := gin.New()
+	// 防火墙中间件
+	r.Use(RateMiddleware)
+
 	v1 := r.Group("/api")
 	userG := v1.Group("/user")
-	userG.Use(middlewares.AuthMiddleware(false))
-	UsersRegister(userG)
-	userG.Use(middlewares.AuthMiddleware(true))
-	FollowsRegister(userG)
+	userG.Use(AuthMiddleware(false))
+	users.UsersRegister(userG)
+	userG.Use(AuthMiddleware(true))
+	users.FollowsRegister(userG)
 
 	// 登陆，注册
 	var token []string

@@ -1,8 +1,7 @@
-package users
+package middlewares
 
 import (
 	"YOYU/backend/common"
-	"YOYU/backend/database"
 	"errors"
 	"net/http"
 	"strings"
@@ -27,16 +26,6 @@ var myAuthorizationHeaderExtractor = &request.PostExtractionFilter{
 	Filter:    stripBearerPrefixFromTokenString,
 }
 
-// 鉴权之后将对应用户填入context
-func UpdateContextUserModel(c *gin.Context, userId uint) {
-	var userModel User
-	if userId != 0 {
-		db := database.GetDB()
-		db.First(&userModel, userId)
-	}
-	c.Set("userModel", userModel)
-}
-
 // 鉴权中间件
 func AuthMiddleware(auto401 bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -51,5 +40,6 @@ func AuthMiddleware(auto401 bool) gin.HandlerFunc {
 		}
 		claims := token.Claims.(jwt.MapClaims)
 		c.Set("userID", uint(claims["userID"].(float64)))
+		c.Next()
 	}
 }

@@ -16,8 +16,8 @@ type GetSerializer struct {
 
 type GetResponse struct {
 	ID           uint      `json:"id"`
-	PosterID     uint      `json:"post_id"`
-	PosterName   string    `json:"post_name"`
+	PosterID     uint      `json:"poster_id"`
+	PosterName   string    `json:"poster_name"`
 	Content      string    `json:"content"`
 	Visibility   uint      `json:"visibility"`
 	MessageBoxID uint      `json:"message_box_id"`

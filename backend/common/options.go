@@ -13,3 +13,7 @@ const DSN = "yoyu:123456@tcp(127.0.0.1:3306)/yoyu?charset=utf8mb4&parseTime=True
 
 // users的参数
 const RANDOM_SECRET = "123456"
+
+// middlewares的参数
+const DUR_TIME = 1 * time.Second
+const REQUEST_COUNT = 100
