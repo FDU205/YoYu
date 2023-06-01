@@ -7,12 +7,14 @@ interface ILongTextBoxProps {
     placeholder: string;
     onSubmit: () => void;
     onChangeOutterText: (text: string) => void;
+    defaulttext?: string;
 }
 
 const LongTextBox: React.FC<ILongTextBoxProps> = ({
     placeholder,
     onSubmit,
     onChangeOutterText,
+    defaulttext="",
 }) => {
     const [text, onChangeText] = useState('');
     return(
@@ -24,7 +26,7 @@ const LongTextBox: React.FC<ILongTextBoxProps> = ({
             > 
                 <TextInput 
                     placeholder={placeholder}
-                    defaultValue={text}
+                    defaultValue={defaulttext}
                     style={styles.input} 
                     multiline={true} 
                     maxLength={200}

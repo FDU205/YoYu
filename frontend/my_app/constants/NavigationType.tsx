@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { messageBoxinfo } from './DataType';
 
 type NavigationParamList = {
     user : { setisLogin : Function };
@@ -10,6 +11,8 @@ type NavigationParamList = {
     modal : undefined;
     walladdmodal : undefined;
     boxaddmodal : undefined;
+    boxaskmodal : { box:messageBoxinfo, onSubmit: ()=>void,};
+    boxmodifymodal : { box:messageBoxinfo, changebox: (t:messageBoxinfo)=>void, setinbox: (t:boolean)=>void,};
     homepage : { userid : number, username : string };
     homepagemodal : { userid : number, username : string };
 };

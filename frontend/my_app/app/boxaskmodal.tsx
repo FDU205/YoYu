@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, Pressable, StyleSheet, useColorScheme, Switch, Alert } from 'react-native';
+import { Platform, Pressable, StyleSheet, useColorScheme, Alert, Switch } from 'react-native';
 
 import { Text, View } from '../components/Themed';
 import React, { useState } from 'react';
@@ -9,21 +9,49 @@ import Colors from '../constants/Colors';
 import Card from '../components/Card';
 import {Keyboard} from 'react-native';
 import { postData } from '../components/Api';
-import { NavigationParamList, Props } from '../constants/NavigationType';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Props } from '../constants/NavigationType';
 import g from './globaldata';
 
-export default function BoxAddModalScreen({ route, navigation }: Props<'boxaddmodal'>) {
+function failToast(msg: string) {
+  Alert.alert(msg);
+}
+
+export default function BoxAskModalScreen({ route, navigation }: Props<'boxaskmodal'>) {
   const colorScheme = useColorScheme();
   const [text, onChangeText] = useState('');
+  const [visibility, onChangeVisibility] = useState(true);
+
+  const HandleAddAsk = async () => {
+    if(text.length < 1) {
+      failToast("提问不能为空！");
+      return;
+    }
+    await postData("/post", 
+      {"message_box_id" : route.params.box.id, "content":text, "visibility":(visibility?1:2)}, 
+      g.token).then(
+      ret => {
+        if(ret.code != 0) {
+          throw new Error(ret.err_msg);
+        } else {
+          navigation.goBack();
+          route.params.onSubmit();
+        }
+      }
+    ).catch(
+      err => {
+        failToast(err+" 创建失败");
+      }
+    )
+  };
 
   return (
     <View style={styles.container}>
+
       <View style={{ flexDirection:'row', alignSelf:'flex-end'}}>
         <Text style={styles.title}>
-          发布你的提问箱~
+          向TA提问
         </Text>
-        <Pressable onPress={()=>{HandleCreateBox(text, navigation)}} style={{marginLeft:100}}>
+        <Pressable onPress={()=>{HandleAddAsk()}} style={{marginLeft:100}}>
             {({ pressed }) => (
               <FontAwesome
                 name="paper-plane"
@@ -36,7 +64,12 @@ export default function BoxAddModalScreen({ route, navigation }: Props<'boxaddmo
       </View>
       
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <LongTextBox placeholder='提问箱标题(最多50字)' onSubmit={()=>{}} onChangeOutterText={onChangeText}/>
+      <LongTextBox 
+        placeholder='请不要用提问箱功能欺负别人哦~' 
+        onSubmit={()=>{}} 
+        onChangeOutterText={onChangeText}
+        defaulttext={text}
+      />
       <Text style={{
         padding: 0,
         color: 'gray',
@@ -44,41 +77,33 @@ export default function BoxAddModalScreen({ route, navigation }: Props<'boxaddmo
         fontSize: 15,
         marginRight: 30,
       }}>
-          {text.length} / 50
+          {text.length} / 200
       </Text>
-      
+      <Text style={{
+        padding: 10,
+        color: 'gray',
+        alignSelf:'flex-end',
+        fontSize: 15,
+        marginRight: 20,
+      }}>
+          {visibility?"实名":"匿名"}发表
+      </Text>
+      <Switch 
+        style={styles.switch} 
+        value={visibility} 
+        onValueChange={onChangeVisibility} 
+        trackColor={{true: Colors.light.tint}}
+      />
+
+
       <Text style={styles.text}>
           预览：
       </Text>
-      <Card title={text} text={"\n\n"+g.username+" 的提问箱→"} onPress={() => {Keyboard.dismiss()}}/>
+      <Card title={"#"} text={"\n"+text} onPress={() => {Keyboard.dismiss()}}/>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
   );
-}
-
-function failToast(msg: string) {
-  Alert.alert(msg);
-}
-
-const HandleCreateBox = async (content: string, navigation: NativeStackNavigationProp<NavigationParamList, "boxaddmodal", undefined>) => {
-  if(content.length < 1) {
-    failToast("提问箱标题不能为空！");
-    return;
-  }
-  postData("/messageBox", {"title" : content}, g.token).then(
-    ret => {
-      if(ret.code != 0) {
-        throw new Error(ret.err_msg);
-      } else {
-        navigation.goBack();
-      }
-    }
-  ).catch(
-    err => {
-      failToast(err+" 创建失败");
-    }
-  )
 }
 
 const styles = StyleSheet.create({
@@ -94,6 +119,7 @@ const styles = StyleSheet.create({
   title: {
     alignSelf:'center',
     marginTop: 30,
+    marginRight:20,
     fontSize: 20,
     fontWeight: 'bold',
   },

@@ -2,26 +2,15 @@ import { Alert, FlatList, StyleSheet } from 'react-native';
 import { Text, View } from '../../components/Themed';
 import Card from '../../components/Card';
 import { getData } from '../../components/Api';
-import { SetStateAction, useEffect, useState } from 'react';
-import type { messageBoxinfo } from '../../constants/DataType';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import type { messageBoxinfo, postinfo } from '../../constants/DataType';
 import { NavigationParamList, Props } from '../../constants/NavigationType';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import g from '../globaldata';
 import { TextInput } from 'react-native-gesture-handler';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
-const onPress = (userid: number, username: string, navigation: NativeStackNavigationProp<NavigationParamList, "boxes", undefined>) => {
-  if(userid == g.userid) {
-    navigation.navigate(
-      'homepage',{userid: userid, username: username},
-    );
-  } else {
-    navigation.navigate(
-      'homepagemodal',{userid: userid, username: username},
-    );
-  }
-  return;
-};
+import Colors from '../../constants/Colors';
+import { TouchableOpacity } from 'react-native';
 
 const PAGE_SIZE = 10;
 let searchtext = "";
@@ -35,6 +24,7 @@ let chosenbox: messageBoxinfo = {
 
 export default function BoxesScreen({ route, navigation }: Props<'boxes'>) {
   const [data, setdata] = useState(new Array<messageBoxinfo>(0));
+  const [postsdata, setpostsdata] = useState(new Array<postinfo>(0));
   const [isinbox, setisinbox] = useState(false);
   let page_num = 2;
   const getNextBoxes = () => {
@@ -59,7 +49,7 @@ export default function BoxesScreen({ route, navigation }: Props<'boxes'>) {
         }
       )
     }
-  }
+  };
   const getNewBoxes = (setdata: { (value: SetStateAction<messageBoxinfo[]>): void; (arg0: any): void; }) => {
     page_num = 1;
     if(presearchtext.length != 0) {
@@ -115,15 +105,113 @@ export default function BoxesScreen({ route, navigation }: Props<'boxes'>) {
       }
     )
   };
-  useEffect(() => {getNewBoxes(setdata)}, []);
+
+  const getNextPosts = () => {
+    getData("/posts?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString()+"&message_box_id="+ chosenbox.id.toString(),g.token).then(
+      ret => {
+        if(ret.code != 0) {
+          throw new Error(ret.err_msg);
+        } else {
+          let temp = ret.data.posts;
+          data.push.apply(data, temp);
+        }
+      }
+    ).then(()=>{
+      page_num++;
+    }).catch(
+      err => {
+        failToast(err+" 刷新失败");
+      }
+    )
+  };
+  const getNewPosts = (setdata: { (value: SetStateAction<postinfo[]>): void; (arg0: any): void; }) => {
+    page_num = 1;
+    getData("/posts?page_num=1&page_size="+PAGE_SIZE.toString()+"&message_box_id="+ chosenbox.id.toString(),g.token).then(
+      ret => {
+        if(ret.code != 0) {
+          throw new Error(ret.err_msg);
+        } else {
+          setdata(ret.data.posts);
+        }
+      }
+    ).catch(
+      err => {
+        failToast(err+" 刷新失败");
+      }
+    )
+  };
+
+  const onPress = (box: messageBoxinfo, setisinbox: Dispatch<SetStateAction<boolean>>) => {
+    chosenbox.id = box.id;
+    chosenbox.owner_id = box.owner_id;
+    chosenbox.owner_name = box.owner_name;
+    chosenbox.title = box.title;
+    setisinbox(true);
+    getNewPosts(setpostsdata);
+    return;
+  };
+
+  useEffect(() => {isinbox? getNewPosts(setpostsdata): getNewBoxes(setdata)}, []);
 
   return (
     isinbox?(
-      <></>
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.back} onPress={() => {setisinbox(false);getNewBoxes(setdata);}}>
+          <FontAwesome 
+            name='chevron-left' 
+            color={Colors.light.tint} size={18} 
+            style={{ marginTop: 1 , marginBottom: 0, marginRight: 10 }}
+          />
+          <Text 
+            style={styles.searchinput}
+          >
+            {chosenbox.owner_name} 的提问箱
+          </Text>
+        </TouchableOpacity>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        <Card 
+          title={chosenbox.title} 
+          text={chosenbox.owner_id==g.userid?"\n点击修改或删除提问箱":"\n点击向TA提问"} 
+          onPress={() => {
+            if(chosenbox.owner_id == g.userid) {
+              navigation.navigate("boxmodifymodal",
+              {
+                box:chosenbox, 
+                changebox:(t)=>{chosenbox=t;getNewPosts(setpostsdata);}, 
+                setinbox:(t)=>{setisinbox(t);getNewBoxes(setdata);},
+              });
+            } else {
+              navigation.navigate("boxaskmodal", {box: chosenbox, onSubmit:()=>{getNewPosts(setpostsdata);}});
+            }
+            }
+          }
+        />
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        <FlatList 
+          style={styles.flat}
+          data={postsdata}
+          renderItem={({ item }) => 
+            <Card 
+              title={"#"+item.id.toString()} 
+              text={"\n"+item.content} 
+              onPress={() => {}}
+            />
+          }
+          refreshing={false}
+          keyExtractor={(item) => item.id.toString()}
+          onRefresh={() => {getNewPosts(setpostsdata)}}
+          onEndReachedThreshold={0.01}
+          onEndReached={() =>{getNextPosts()}}
+        />
+      </View>
     ):(
       <View style={styles.container}>
         <View style={styles.search}>
-          <FontAwesome name='search' color={"#D3D3D3"} size={28} style={{ marginTop: -3 , marginBottom: -3, marginRight: 10 }} />
+          <FontAwesome 
+            name='search' 
+            color={"#D3D3D3"} size={28} 
+            style={{ marginTop: -3 , marginBottom: -3, marginRight: 10 }} 
+          />
           <TextInput 
             style={styles.searchinput} 
             onSubmitEditing={()=>{
@@ -139,7 +227,11 @@ export default function BoxesScreen({ route, navigation }: Props<'boxes'>) {
           style={styles.flat}
           data={data}
           renderItem={({ item }) => 
-            <Card title={item.title} text={"\n\n"+item.owner_name + " 的提问箱↑"} onPress={() => {onPress(item.owner_id, item.owner_name, navigation)}}/>
+            <Card 
+              title={item.title} 
+              text={"\n\n"+item.owner_name + " 的提问箱→"} 
+              onPress={() => {onPress(item, setisinbox)}}
+            />
           }
           refreshing={false}
           keyExtractor={(item) => item.id.toString()}
@@ -193,5 +285,11 @@ const styles = StyleSheet.create({
     flex: 8,
     fontSize: 15,
     padding: 0,
+  },
+  back: {
+    padding: 15,
+    marginHorizontal: 15,
+    marginVertical: 20,
+    flexDirection: 'row',
   },
 });
