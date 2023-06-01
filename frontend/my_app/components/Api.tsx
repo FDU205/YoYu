@@ -50,7 +50,7 @@ async function putData(url: string, body: any, token = ""): Promise<any> {
   return response.json();
 }
 
-async function deleteData(url: string, token = ""): Promise<any> {
+async function deleteData(url: string, body = {}, token = ""): Promise<any> {
   url = rootUrl + url;
 
   const myHeaders = new Headers();
@@ -61,7 +61,8 @@ async function deleteData(url: string, token = ""): Promise<any> {
 
   const response = await fetch(url, {
     method: 'DELETE',
-    headers: myHeaders
+    headers: myHeaders,
+    body: JSON.stringify(body)
   });
   return response.json();
 }

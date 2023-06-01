@@ -20,4 +20,14 @@ type postinfo = {
     content:string,
 }
 
-export type {wallpost, messageBoxinfo, postinfo};
+type follows = {
+    user_id:number, 
+    username:string, 
+}
+
+type fans = {
+    user_id:number, 
+    username:string, 
+}
+
+export type {wallpost, messageBoxinfo, postinfo, follows, fans};

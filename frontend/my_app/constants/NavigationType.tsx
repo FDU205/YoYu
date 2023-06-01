@@ -13,6 +13,8 @@ type NavigationParamList = {
     boxaddmodal : undefined;
     boxaskmodal : { box:messageBoxinfo, onSubmit: ()=>void,};
     boxmodifymodal : { box:messageBoxinfo, changebox: (t:messageBoxinfo)=>void, setinbox: (t:boolean)=>void,};
+    followmodal : undefined;
+    fansmodal : undefined;
     homepage : { userid : number, username : string };
     homepagemodal : { userid : number, username : string };
 };
