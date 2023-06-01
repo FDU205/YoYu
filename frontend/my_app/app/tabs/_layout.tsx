@@ -15,7 +15,7 @@ import Logout from '../user/logout';
 
 const Tabs = createBottomTabNavigator();
 
-export default function TabLayout() {
+export default function TabLayout({ route, navigation }: Props<'tabs'>) {
   const colorScheme = useColorScheme();
   return (
     <Tabs.Navigator
@@ -78,7 +78,7 @@ export default function TabLayout() {
           headerRight: () => (
             <Button
               title="退出登录"
-              onPress={Logout}
+              onPress={()=>{ route.params.setisLogin(false); Logout;}}
             />
           ),
         }}

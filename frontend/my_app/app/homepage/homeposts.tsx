@@ -3,7 +3,7 @@ import { Text, View } from '../../components/Themed';
 import Card from '../../components/Card';
 import { getData } from '../../components/Api';
 import { SetStateAction, useEffect, useState } from 'react';
-import type { wallpost } from '../../constants/DataType';
+import type { postinfo } from '../../constants/DataType';
 import { NavigationParamList, Props } from '../../constants/NavigationType';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import g from '../globaldata';
@@ -11,11 +11,15 @@ import FlatListTail from '../../components/FlatListTail';
 
 const PAGE_SIZE = 10;
 
-export default function HomeWallScreen() {
-  const [data, setdata] = useState(new Array<wallpost>(0));
+export default function HomePostsScreen({ route, navigation }: Props<'homeposts'>) {
+  const onPress = () => {
+
+  };
+
+  const [data, setdata] = useState(new Array<postinfo>(0));
   let page_num = 2;
-  const getNextWall = () => {
-    getData("/wall/mywall?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),g.token).then(
+  const getNextPosts = () => {
+    getData("/mypost?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),g.token).then(
       ret => {
         if(ret.code != 0) {
           throw new Error(ret.err_msg);
@@ -32,8 +36,8 @@ export default function HomeWallScreen() {
       }
     )
   }
-  const getNewWall = (setdata: { (value: SetStateAction<wallpost[]>): void; (arg0: any): void; }) => {
-    getData("/wall/mywall?page_num=1&page_size="+PAGE_SIZE.toString(),g.token).then(
+  const getNewPosts = (setdata: { (value: SetStateAction<postinfo[]>): void; (arg0: any): void; }) => {
+    getData("/mypost?page_num=1&page_size="+PAGE_SIZE.toString(),g.token).then(
       ret => {
         if(ret.code != 0) {
           throw new Error(ret.err_msg);
@@ -48,7 +52,7 @@ export default function HomeWallScreen() {
       }
     )
   };
-  useEffect(() => {getNewWall(setdata)}, []);
+  useEffect(() => {getNewPosts(setdata)}, []);
   
   return (
     <View style={styles.container}>
@@ -57,13 +61,17 @@ export default function HomeWallScreen() {
         style={styles.flat}
         data={data}
         renderItem={({ item }) => 
-          <Card title={item.poster_name} text={item.content} onPress={() => {}}/>
+        <Card 
+            title={"#"+item.id.toString()+(item.visibility==2?(" (匿名)"):(""))} 
+            text={"\n"+item.content}
+            onPress={() => {navigation.navigate("postmodal",{postinfo:item, refresh:()=>{getNewPosts(setdata)}, message_box_owner_id:-1})}}
+        />
         }
         refreshing={false}
         keyExtractor={(item) => item.id.toString()}
-        onRefresh={() => {getNewWall(setdata)}}
+        onRefresh={() => {getNewPosts(setdata)}}
         onEndReachedThreshold={0.01}
-        onEndReached={() =>{getNextWall()}}
+        onEndReached={() =>{getNextPosts()}}
         ListFooterComponent={<FlatListTail/>}
       />
     </View>

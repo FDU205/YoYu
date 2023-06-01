@@ -7,6 +7,7 @@ import type { fans } from '../constants/DataType';
 import { NavigationParamList, Props } from '../constants/NavigationType';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import g from './globaldata';
+import FlatListTail from '../components/FlatListTail';
 
 const onPress = (userid: number, username: string, navigation: NativeStackNavigationProp<NavigationParamList, "fansmodal", undefined>) => {
   navigation.navigate(
@@ -21,7 +22,7 @@ export default function FansScreen({ route, navigation }: Props<'fansmodal'>) {
   const [data, setdata] = useState(new Array<fans>(0));
   let page_num = 2;
   const getNext = () => {
-    getData("/user/fnaslist?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),g.token).then(
+    getData("/user/fanslist?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),g.token).then(
       ret => {
         if(ret.code != 0) {
           throw new Error(ret.err_msg);
@@ -77,6 +78,7 @@ export default function FansScreen({ route, navigation }: Props<'fansmodal'>) {
         onRefresh={() => {getNew(setdata)}}
         onEndReachedThreshold={0.01}
         onEndReached={() =>{getNext()}}
+        ListFooterComponent={<FlatListTail/>}
       />
     </View>
   );

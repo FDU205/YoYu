@@ -7,6 +7,7 @@ import type { follows } from '../constants/DataType';
 import { NavigationParamList, Props } from '../constants/NavigationType';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import g from './globaldata';
+import FlatListTail from '../components/FlatListTail';
 
 const onPress = (userid: number, username: string, navigation: NativeStackNavigationProp<NavigationParamList, "followmodal", undefined>) => {
   navigation.navigate(
@@ -95,6 +96,7 @@ export default function FollowScreen({ route, navigation }: Props<'followmodal'>
         onRefresh={() => {getNew(setdata)}}
         onEndReachedThreshold={0.01}
         onEndReached={() =>{getNext()}}
+        ListFooterComponent={<FlatListTail/>}
       />
     </View>
   );

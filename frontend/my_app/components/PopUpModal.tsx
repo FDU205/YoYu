@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Modal,
   StyleSheet,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View
 } from "react-native";
 import { Platform } from "react-native";
-import { set } from "react-native-reanimated";
+import Colors from '../constants/Colors';
 
 interface IPopUpModalProps {
     ifshow: boolean;
@@ -35,22 +35,22 @@ const PopUpModal: React.FC<IPopUpModalProps> = ({
                 <View style={styles.modalView}>
                     <Text style={styles.modalText}>{info}</Text>
                     <View style={{flexDirection:'row',}}>
-                        <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                        <TouchableOpacity
+                            style={{ ...styles.openButton, backgroundColor: Colors.light.tint }}
                             onPress={() => {
                                 onCancel();
                             }}
                             >
                             <Text style={styles.textStyle}>取消</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ ...styles.openButton, backgroundColor: Colors.light.tint }}
                             onPress={() => {
                                 onSubmit();
                             }}
                             >
                             <Text style={styles.textStyle}>确认</Text>
-                        </TouchableHighlight>
+                        </TouchableOpacity>
                     </View>
                     
                 </View>

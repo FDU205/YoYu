@@ -48,7 +48,7 @@ const cancelFollow = (followid: number) => {
 
 const Tabs = createMaterialTopTabNavigator();
 
-export default function HomePageLayout({ route, navigation } : Props<'homepage'>) {
+export default function HomePageLayout({ route, navigation } : Props<'homepagemodal'>) {
   const colorScheme = useColorScheme();
   const [ismine, setismine] = useState(route.params.username == g.username);
   const [isfollow, setisfollow] = useState(false);
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20, // 圆角
     padding: 8,
+    marginVertical:2,
   },
   button2: {
     borderStyle: 'solid',
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20, // 圆角
     padding: 8,
+    marginVertical:2,
   },
   separator: {
     alignSelf: 'center',

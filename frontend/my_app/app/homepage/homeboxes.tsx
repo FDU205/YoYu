@@ -23,87 +23,44 @@ let chosenbox: messageBoxinfo = {
   owner_name: ''
 };
 
-export default function BoxesScreen({ route, navigation }: Props<'boxes'>) {
+export default function HomeBoxesScreen({ route, navigation }: Props<'homeboxes'>) {
   const [data, setdata] = useState(new Array<messageBoxinfo>(0));
   const [postsdata, setpostsdata] = useState(new Array<postinfo>(0));
   const [isinbox, setisinbox] = useState(false);
   let page_num = 2;
+  let padismine = "&owner="+route.params.owner_id.toString();
   const getNextBoxes = () => {
-    if(presearchtext.length != 0) {
-      HandleNextSearch(presearchtext);
-      page_num++;
-    } else {
-      getData("/messageBoxes?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString(),g.token).then(
-        ret => {
-          if(ret.code != 0) {
+    getData("/messageBoxes?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString()+padismine,g.token).then(
+    ret => {
+        if(ret.code != 0) {
             throw new Error(ret.err_msg);
-          } else {
+        } else {
             let temp = ret.data.messageBoxes;
             data.push.apply(data, temp);
-          }
         }
-      ).then(()=>{
-        page_num++;
-      }).catch(
-        err => {
-          failToast(err+" 刷新失败");
-        }
-      )
     }
+    ).then(()=>{
+        page_num++;
+        }).catch(
+        err => {
+            failToast(err+" 刷新失败");
+        }
+    )
   };
   const getNewBoxes = (setdata: { (value: SetStateAction<messageBoxinfo[]>): void; (arg0: any): void; }) => {
     page_num = 1;
-    if(presearchtext.length != 0) {
-      HandleNewSearch(presearchtext);
-    } else {
-      getData("/messageBoxes?page_num=1&page_size="+PAGE_SIZE.toString(),g.token).then(
-        ret => {
-          if(ret.code != 0) {
+    getData("/messageBoxes?page_num=1&page_size="+PAGE_SIZE.toString()+padismine,g.token).then(
+    ret => {
+        if(ret.code != 0) {
             throw new Error(ret.err_msg);
-          } else {
+        } else {
             setdata(ret.data.messageBoxes);
-          }
         }
-      ).catch(
-        err => {
-          failToast(err+" 刷新失败");
-        }
-      )
     }
-  };
-  const HandleNewSearch = (searchtext: string) => {
-    getData("/messageBoxes?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString()+"&title="+searchtext,g.token).then(
-      ret => {
-        if(ret.code != 0) {
-          throw new Error(ret.err_msg);
-        } else {
-          setdata(ret.data.messageBoxes);
+    ).catch(
+        err => {
+            failToast(err+" 刷新失败");
         }
-      }
-    ).then(()=>{
-      page_num++;
-    }).catch(
-      err => {
-        failToast(err+" 搜索失败");
-      }
-    )
-  };
-  const HandleNextSearch = (searchtext: string) => {
-    getData("/messageBoxes?page_num="+page_num.toString()+"&page_size="+PAGE_SIZE.toString()+"&title="+searchtext,g.token).then(
-      ret => {
-        if(ret.code != 0) {
-          throw new Error(ret.err_msg);
-        } else {
-          let temp = ret.data.messageBoxes;
-          data.push.apply(data, temp);
-        }
-      }
-    ).then(()=>{
-      page_num++;
-    }).catch(
-      err => {
-        failToast(err+" 搜索失败");
-      }
     )
   };
 
@@ -152,35 +109,23 @@ export default function BoxesScreen({ route, navigation }: Props<'boxes'>) {
     return;
   };
 
-  useEffect(() => {presearchtext=""; isinbox? getNewPosts(setpostsdata): getNewBoxes(setdata)}, []);
+  useEffect(() => {isinbox? getNewPosts(setpostsdata): getNewBoxes(setdata)}, []);
 
   return (
     isinbox?(
       <View style={styles.container}>
-        <View style={{flexDirection:'row'}}>
-          <TouchableOpacity style={styles.back} onPress={() => {setisinbox(false);getNewBoxes(setdata);}}>
-            <FontAwesome 
-              name='chevron-left' 
-              color={Colors.light.tint} size={18} 
-              style={{ marginTop: 3 , marginBottom: 0, marginRight: 10 }}
-            />
-            <Text 
-              style={styles.boxheader}
-            >
-              {chosenbox.owner_name} 的提问箱
-            </Text>
-          </TouchableOpacity>
-          {(g.userid!=chosenbox.owner_id)?(<TouchableOpacity style={styles.hishome} onPress={() => {navigation.navigate("homepagemodal",{userid:chosenbox.owner_id,username:chosenbox.owner_name})}}>
-            <Text 
-              style={styles.hishomeheader}
-            >
-              TA的主页
-            </Text>
-          </TouchableOpacity>):(<></>)}
-          
-        </View>
-        
-
+        <TouchableOpacity style={styles.back} onPress={() => {setisinbox(false);getNewBoxes(setdata);}}>
+          <FontAwesome 
+            name='chevron-left' 
+            color={Colors.light.tint} size={18} 
+            style={{ marginTop: 3 , marginBottom: 0, marginRight: 10 }}
+          />
+          <Text 
+            style={styles.boxheader}
+          >
+            {chosenbox.owner_name} 的提问箱
+          </Text>
+        </TouchableOpacity>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         <Card 
           title={chosenbox.title} 
@@ -221,23 +166,7 @@ export default function BoxesScreen({ route, navigation }: Props<'boxes'>) {
       </View>
     ):(
       <View style={styles.container}>
-        <View style={styles.search}>
-          <FontAwesome 
-            name='search' 
-            color={"#D3D3D3"} size={28} 
-            style={{ marginTop: -3 , marginBottom: -3, marginRight: 10 }} 
-          />
-          <TextInput 
-            style={styles.searchinput} 
-            onSubmitEditing={()=>{
-              page_num = 1;
-              HandleNewSearch(searchtext);
-              presearchtext = searchtext.slice(0);
-            }} 
-            onChangeText={text => {searchtext=text;}}
-          />
-        </View>
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        
         <FlatList 
           style={styles.flat}
           data={data}
@@ -318,18 +247,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginVertical: 20,
     flexDirection: 'row',
-    flex:2.5,
-  },
-  hishome: {
-    padding: 15,
-    marginHorizontal: 15,
-    marginVertical: 20,
-    flex:1,
-  },
-  hishomeheader: {
-    flex: 8,
-    fontSize: 18,
-    padding: 0,
-    color: Colors.light.tint,
   },
 });

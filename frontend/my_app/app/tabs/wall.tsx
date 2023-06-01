@@ -7,6 +7,7 @@ import type { wallpost } from '../../constants/DataType';
 import { NavigationParamList, Props } from '../../constants/NavigationType';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import g from '../globaldata';
+import FlatListTail from '../../components/FlatListTail';
 
 const TEST_DATA = [
   {
@@ -118,6 +119,7 @@ export default function TabWallScreen({ route, navigation }: Props<'tabwall'>) {
         onRefresh={() => {getNewWall(setdata)}}
         onEndReachedThreshold={0.01}
         onEndReached={() =>{getNextWall()}}
+        ListFooterComponent={<FlatListTail/>}
       />
     </View>
   );

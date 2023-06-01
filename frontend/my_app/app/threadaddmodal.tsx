@@ -1,90 +1,54 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, Pressable, StyleSheet, useColorScheme, Alert } from 'react-native';
+import { Platform, Pressable, StyleSheet, useColorScheme, Alert, Switch } from 'react-native';
 
 import { Text, View } from '../components/Themed';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import LongTextBox from '../components/LongTextBox';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Colors from '../constants/Colors';
 import Card from '../components/Card';
 import {Keyboard} from 'react-native';
-import { putData, deleteData } from '../components/Api';
+import { postData } from '../components/Api';
 import { Props } from '../constants/NavigationType';
 import g from './globaldata';
-import PopUpModal from '../components/PopUpModal';
 
 function failToast(msg: string) {
   Alert.alert(msg);
 }
 
-export default function BoxModifyModalScreen({ route, navigation }: Props<'boxmodifymodal'>) {
+export default function ThreadAddModalScreen({ route, navigation }: Props<'threadaddmodal'>) {
   const colorScheme = useColorScheme();
   const [text, onChangeText] = useState('');
-  const [ifshowdeletemodal, onChangeifshowdeletemodal] = useState(false);
 
-  const HandleModifyBox = async () => {
-    if(pretext == text) {
-      return;
-    }
+  const HandleAddAsk = async () => {
     if(text.length < 1) {
-      failToast("提问箱标题不能为空！");
+      failToast((route.params.type==1?("追问"):("回答"))+"不能为空！");
       return;
     }
-    await putData("/messageBox/"+route.params.box.id.toString(), {"title" : text}, g.token).then(
+    await postData("/post/channel", {"post_id":route.params.post_id,"content":text,"type":route.params.type}, g.token).then(
       ret => {
         if(ret.code != 0) {
           throw new Error(ret.err_msg);
         } else {
-          route.params.changebox({
-            id:route.params.box.id,owner_id:route.params.box.owner_id,title:text,owner_name:route.params.box.owner_name
-          });
           navigation.goBack();
+          route.params.refresh();
         }
       }
     ).catch(
       err => {
-        failToast(err+" 创建失败");
+        failToast(err+" "+(route.params.type==1?("追问"):("回答"))+"失败");
       }
     )
   };
 
-  const HandleDeleteBox = async () => {
-    await deleteData("/messageBox/"+route.params.box.id.toString(), {}, g.token).then(
-      ret => {
-        if(ret.code != 0) {
-          throw new Error(ret.err_msg);
-        } else {
-          route.params.changebox({
-            id:0,owner_id:0,title:"",owner_name:"",
-          });
-          navigation.goBack();
-          route.params.setinbox(false);
-        }
-      }
-    ).catch(
-      err => {
-        failToast(err+" 删除失败");
-      }
-    )
-  };
-
-  useEffect(()=>{onChangeText(route.params.box.title)},[]);
-  let pretext = route.params.box.title;
   return (
     <View style={styles.container}>
-      <PopUpModal 
-        ifshow={ifshowdeletemodal} 
-        info={"确认删除提问箱?"} 
-        onCancel={()=>{onChangeifshowdeletemodal(false);}} 
-        onSubmit={()=>{onChangeifshowdeletemodal(false);HandleDeleteBox();}}
-      />
-      
 
       <View style={{ flexDirection:'row', alignSelf:'flex-end'}}>
         <Text style={styles.title}>
-          修改你的提问箱
+          向TA{route.params.type==1?("追问"):("回答")}
         </Text>
-        <Pressable onPress={()=>{HandleModifyBox()}} style={{marginLeft:100}}>
+        <Pressable onPress={()=>{HandleAddAsk()}} style={{marginLeft:100}}>
             {({ pressed }) => (
               <FontAwesome
                 name="paper-plane"
@@ -98,7 +62,7 @@ export default function BoxModifyModalScreen({ route, navigation }: Props<'boxmo
       
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <LongTextBox 
-        placeholder='' 
+        placeholder={"友善"+(route.params.type==1?("追问"):("回答"))+"~" }
         onSubmit={()=>{}} 
         onChangeOutterText={onChangeText}
         defaulttext={text}
@@ -110,26 +74,13 @@ export default function BoxModifyModalScreen({ route, navigation }: Props<'boxmo
         fontSize: 15,
         marginRight: 30,
       }}>
-          {text.length} / 50
+          {text.length} / 200
       </Text>
 
-      <Text style={{
-        padding: 0,
-        color: 'red',
-        alignSelf:'flex-end',
-        fontSize: 15,
-        marginRight: 30,
-        marginTop:5,
-      }}
-        onPress={()=>{onChangeifshowdeletemodal(true);}}
-      >
-          删除提问箱
-      </Text>
-      
       <Text style={styles.text}>
           预览：
       </Text>
-      <Card title={text} text={"\n\n"+g.username+" 的提问箱→"} onPress={() => {Keyboard.dismiss()}}/>
+      <Card title={(route.params.type==1?("追问"):("回答"))} text={"\n"+text} onPress={() => {Keyboard.dismiss()}}/>
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
@@ -149,6 +100,7 @@ const styles = StyleSheet.create({
   title: {
     alignSelf:'center',
     marginTop: 30,
+    marginRight:20,
     fontSize: 20,
     fontWeight: 'bold',
   },

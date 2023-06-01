@@ -3,7 +3,9 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { Icon } from '../../components/FontAwesomeIcon';
 import { Text, View } from '../../components/Themed';
 import { StyleSheet } from 'react-native';
-import TabWallScreen from './wall';
+import HomeWallScreen from './wall';
+import HomePostsScreen from './homeposts';
+import HomeBoxesScreen from './homeboxes';
 import { useState } from 'react';
 import { Link } from 'expo-router';
 import { Props } from '../../constants/NavigationType'; 
@@ -74,7 +76,6 @@ export default function HomePageLayout({ route, navigation } : Props<'homepage'>
         throw new Error(ret.err_msg);
       } else {
         setisfollow(ret.yes);
-        console.log(ret.yes);
       }
     }
   ).catch(
@@ -104,30 +105,35 @@ export default function HomePageLayout({ route, navigation } : Props<'homepage'>
         
       </View>
       <Tabs.Navigator>
+        {ismine?(<>
         <Tabs.Screen
-          name="wall1"
-          component={TabWallScreen}
+          name="homeboxes"
+          component={HomeBoxesScreen}
           options={{
-            title: ismine?'我的提问箱':'ta的提问箱',
+            title: '我的提问箱',
             tabBarIcon: ({ color }) => <FontAwesome size={25} style={{ marginBottom: -3 }} name="dropbox" color={color} />,
-          }}
+          }} 
+          initialParams={{owner_id:route.params.userid}}
         />
         <Tabs.Screen
-          name="wall2"
-          component={TabWallScreen}
+          name="homeposts"
+          component={HomePostsScreen}
           options={{
-            title: ismine?'我的帖子':'ta的帖子',
+            title: '我的帖子',
             tabBarIcon: ({ color }) => <FontAwesome size={25} style={{ marginBottom: -3 }} name="file-text-o" color={color} />,
-          }}
+          }} 
         />
         <Tabs.Screen
-          name="wall3"
-          component={TabWallScreen}
+          name="homewall"
+          component={HomeWallScreen}
           options={{
-            title: ismine?'我的表白':'ta的表白',
+            title: '我的表白',
             tabBarIcon: ({ color }) => <FontAwesome size={24} style={{ marginBottom: -3 }} name="heart-o" color={color} />,
-          }}
-        />
+          }} 
+        /></>):(<>
+          
+          </>)}
+        
       </Tabs.Navigator>
     </View>
   );

@@ -19,10 +19,13 @@ import g from './globaldata';
 import BoxAddModalScreen from './boxaddmodal';
 import BoxModifyModalScreen from './boxmodifymodal';
 import BoxAskModalScreen from './boxaskmodal';
+import PostScreen from './postmodal';
+import ThreadAddModalScreen from './threadaddmodal';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
   'The navigation state parsed from the URL contains routes not present in the root navigator.',
+  'Sending `onAnimatedValueUpdate`'
 ]);
 
 const Stack = createNativeStackNavigator<NavigationParamList>();
@@ -97,7 +100,8 @@ function RootLayoutNav() {
               <Stack.Screen 
                 name="tabs" 
                 component={TabLayout}
-                options={{ headerShown: false }} 
+                options={{ headerShown: false }}
+                initialParams={{ setisLogin:setisLogin }}
               />
               <Stack.Screen 
                 name="modal" 
@@ -129,6 +133,11 @@ function RootLayoutNav() {
                 component={BoxAskModalScreen} 
                 options={{ presentation: 'modal' }} 
               />
+              <Stack.Screen 
+                name="postmodal" 
+                component={PostScreen} 
+                options={{ presentation: 'modal' }} 
+              />
               <Stack.Screen
                 name="followmodal" 
                 component={FollowScreen} 
@@ -137,6 +146,11 @@ function RootLayoutNav() {
               <Stack.Screen 
                 name="fansmodal" 
                 component={FansScreen} 
+                options={{ presentation: 'modal' }} 
+              />
+              <Stack.Screen 
+                name="threadaddmodal" 
+                component={ThreadAddModalScreen} 
                 options={{ presentation: 'modal' }} 
               />
             </Stack.Group>

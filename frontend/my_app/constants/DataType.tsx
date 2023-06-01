@@ -18,6 +18,7 @@ type postinfo = {
     poster_id:number,
     message_box_id:number,
     content:string,
+    visibility:number,
 }
 
 type follows = {
@@ -30,4 +31,20 @@ type fans = {
     username:string, 
 }
 
-export type {wallpost, messageBoxinfo, postinfo, follows, fans};
+type thread = {
+    id:number,
+    post_id:number,
+    content:string,
+    type:number,
+}
+
+type postdetail = {
+    id:number,
+    poster_id:number,
+    poster_name:string,
+    content:string,
+    visibility:number,
+    message_box_id:number,
+}
+
+export type {wallpost, messageBoxinfo, postinfo, follows, fans, thread, postdetail};

@@ -2,7 +2,7 @@ const rootUrl = 'http://192.168.1.109:8080/api';
 
 async function getData(url: string, token = ""): Promise<any> {
   url = rootUrl + url;
-  console.log("token: "+token);
+  //console.log("get token: "+token);
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   if(token !== "") {
@@ -18,7 +18,7 @@ async function getData(url: string, token = ""): Promise<any> {
 
 async function postData(url: string, body: any, token = ""): Promise<any> {
   url = rootUrl + url;
-  console.log("token: "+token);
+  //console.log("post token: "+token);
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   if(token !== "") {
@@ -35,7 +35,7 @@ async function postData(url: string, body: any, token = ""): Promise<any> {
 
 async function putData(url: string, body: any, token = ""): Promise<any> {
   url = rootUrl + url;
-
+  //console.log("put token: "+token);
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   if(token !== "") {
@@ -52,7 +52,7 @@ async function putData(url: string, body: any, token = ""): Promise<any> {
 
 async function deleteData(url: string, body = {}, token = ""): Promise<any> {
   url = rootUrl + url;
-
+  //console.log("del token: "+token);
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   if(token !== "") {
