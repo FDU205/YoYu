@@ -16,4 +16,8 @@ const RANDOM_SECRET = "123456"
 
 // middlewares的参数
 const DUR_TIME = 1 * time.Second
-const REQUEST_COUNT = 100
+const REQUEST_COUNT = 50
+
+// cache的参数
+const CACHE_EXP = time.Minute * 2
+const CACHE_PURG = time.Minute * 5

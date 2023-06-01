@@ -422,7 +422,7 @@ func TestUsers(t *testing.T) {
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 		asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
-		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+w.Body.String())
+		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 		if i < 5 {
 			token = append(token, w.Body.String()[52:172])
 		}
@@ -442,7 +442,7 @@ func TestUsers(t *testing.T) {
 			w := httptest.NewRecorder()
 			r.ServeHTTP(w, req)
 			asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
-			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+w.Body.String())
+			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 		}
 	}
 
@@ -460,11 +460,11 @@ func TestUsers(t *testing.T) {
 			w := httptest.NewRecorder()
 			r.ServeHTTP(w, req)
 			asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
-			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+w.Body.String())
+			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 		}
 	}
 
-	// 查看数量
+	// 关注列表
 	for id := 0; id < 5; id = id + 1 {
 		for _, testData := range FollowListRequestTests {
 			bodyData := testData.bodyData
@@ -496,7 +496,7 @@ func TestUsers(t *testing.T) {
 			w := httptest.NewRecorder()
 			r.ServeHTTP(w, req)
 			asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
-			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+w.Body.String())
+			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 		}
 	}
 
@@ -514,7 +514,7 @@ func TestUsers(t *testing.T) {
 			w := httptest.NewRecorder()
 			r.ServeHTTP(w, req)
 			asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
-			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+w.Body.String())
+			asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 		}
 	}
 }

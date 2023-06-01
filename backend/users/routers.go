@@ -1,11 +1,15 @@
 package users
 
 import (
+	"YOYU/backend/common"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/patrickmn/go-cache"
 )
+
+var FollowCache *cache.Cache
 
 // 将Users模块的功能注册进框架
 func UsersRegister(router *gin.RouterGroup) {
@@ -16,6 +20,7 @@ func UsersRegister(router *gin.RouterGroup) {
 // 注册关注模块的功能
 // 这些是要鉴权之后才能使用的
 func FollowsRegister(router *gin.RouterGroup) {
+	FollowCache = cache.New(common.CACHE_EXP, common.CACHE_PURG)
 	router.POST("/follow", Follow)
 	router.DELETE("/unfollow", UnFollow)
 	router.GET("/isfollow", IsFollow)
@@ -74,6 +79,8 @@ func Follow(c *gin.Context) {
 		return
 	}
 
+	// 清空cache
+	FollowCache.Flush()
 	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil})
 }
 
@@ -90,13 +97,20 @@ func UnFollow(c *gin.Context) {
 		return
 	}
 
+	// 清空cache
+	FollowCache.Flush()
 	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil})
 }
 
 // 是否关注
 func IsFollow(c *gin.Context) {
-	followID_str := c.Query("follow_id")
+	// cache中找
+	if ret, found := FollowCache.Get(c.Request.URL.String() + c.GetHeader("Authorization")); found {
+		c.JSON(http.StatusOK, ret.(gin.H))
+		return
+	}
 
+	followID_str := c.Query("follow_id")
 	followID, err := strconv.Atoi(followID_str)
 	if err != nil || followID < 1 {
 		c.JSON(http.StatusOK, gin.H{"code": 1, "err_msg": "参数错误", "yes": nil})
@@ -106,11 +120,21 @@ func IsFollow(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
 	yes := IsFollowing(&Follower{FollowingID: uint(followID), FollowedByID: userID})
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "yes": yes})
+
+	// 存cache
+	ret := gin.H{"code": 0, "err_msg": nil, "yes": yes}
+	FollowCache.Set(c.Request.URL.String()+c.GetHeader("Authorization"), ret, cache.DefaultExpiration)
+	c.JSON(http.StatusOK, ret)
 }
 
 // 获取关注列表
 func GetFollowList(c *gin.Context) {
+	// cache中找
+	if ret, found := FollowCache.Get(c.Request.URL.String() + c.GetHeader("Authorization")); found {
+		c.JSON(http.StatusOK, ret.(gin.H))
+		return
+	}
+
 	page_num_str := c.Query("page_num")
 	page_size_str := c.Query("page_size")
 	if page_num_str == "" || page_size_str == "" {
@@ -135,11 +159,21 @@ func GetFollowList(c *gin.Context) {
 
 	c.Set("follows", follows)
 	serializer := FollowSerializer{c}
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()})
+
+	// 存cache
+	ret := gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()}
+	FollowCache.Set(c.Request.URL.String()+c.GetHeader("Authorization"), ret, cache.DefaultExpiration)
+	c.JSON(http.StatusOK, ret)
 }
 
 // 获取关注数
 func GetFollowCount(c *gin.Context) {
+	// cache中找
+	if ret, found := FollowCache.Get(c.Request.URL.String() + c.GetHeader("Authorization")); found {
+		c.JSON(http.StatusOK, ret.(gin.H))
+		return
+	}
+
 	id := c.MustGet("userID").(uint)
 	count, err := FollowCountGet(id)
 	if err != nil {
@@ -147,11 +181,20 @@ func GetFollowCount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "count": count})
+	// 存cache
+	ret := gin.H{"code": 0, "err_msg": nil, "count": count}
+	FollowCache.Set(c.Request.URL.String()+c.GetHeader("Authorization"), ret, cache.DefaultExpiration)
+	c.JSON(http.StatusOK, ret)
 }
 
 // 获取粉丝列表
 func GetFansList(c *gin.Context) {
+	// cache中找
+	if ret, found := FollowCache.Get(c.Request.URL.String() + c.GetHeader("Authorization")); found {
+		c.JSON(http.StatusOK, ret.(gin.H))
+		return
+	}
+
 	page_num_str := c.Query("page_num")
 	page_size_str := c.Query("page_size")
 	if page_num_str == "" || page_size_str == "" {
@@ -176,11 +219,21 @@ func GetFansList(c *gin.Context) {
 
 	c.Set("fans", fans)
 	serializer := FansSerializer{c}
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()})
+
+	// 存cache
+	ret := gin.H{"code": 0, "err_msg": nil, "data": serializer.Response()}
+	FollowCache.Set(c.Request.URL.String()+c.GetHeader("Authorization"), ret, cache.DefaultExpiration)
+	c.JSON(http.StatusOK, ret)
 }
 
 // 获取粉丝数
 func GetFansCount(c *gin.Context) {
+	// cache中找
+	if ret, found := FollowCache.Get(c.Request.URL.String() + c.GetHeader("Authorization")); found {
+		c.JSON(http.StatusOK, ret.(gin.H))
+		return
+	}
+
 	id := c.MustGet("userID").(uint)
 	count, err := FansCountGet(id)
 
@@ -189,5 +242,8 @@ func GetFansCount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"code": 0, "err_msg": nil, "count": count})
+	// 存cache
+	ret := gin.H{"code": 0, "err_msg": nil, "count": count}
+	FollowCache.Set(c.Request.URL.String()+c.GetHeader("Authorization"), ret, cache.DefaultExpiration)
+	c.JSON(http.StatusOK, ret)
 }
