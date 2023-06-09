@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, TextInput, StyleSheet, Alert } from "react-native";
+import { Button, TextInput, StyleSheet, Alert, ImageBackground } from "react-native";
 import { Text, View } from "../../components/Themed";
 import { Link } from '@react-navigation/native';
 import type { Props } from '../../constants/NavigationType';
@@ -14,63 +14,66 @@ export default function LoginScreen({ route, navigation }: Props<'login'>) {
   const [password, onChangePassword] = useState('');
   
   return (
-    <View style={styles.container}>
-      <View style={styles.title}>
-        <FontAwesome
-          name="comments-o"
-          size={60}
-          color={"white"}
-          style={{ marginRight: 15 }}
-        />
-        <Text style={styles.welcome_text}>
-            幽语
-        </Text>
-      </View>
-      <View style={styles.logincard}>
-        <View style={styles.input}>
-          <View style={styles.inputbox}>
-            <TextInput 
-              style={styles.input_text}
-              textContentType='username'
-              placeholder="用户名"
-              onChangeText={username => onChangeUsername(username)}
-              defaultValue={username}
-              maxLength={255}
-            />
-          </View>
-          
-          <View style={styles.inputbox}>
-            <TextInput 
-              style={styles.input_text}
-              secureTextEntry={true}
-              placeholder="密码"
-              onChangeText={password => onChangePassword(password)}
-              defaultValue={password}
-              maxLength={32}
-            />
-          </View>
-          
+    <ImageBackground source={require("../../assets/images/b2.gif") } style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.title}>
+          <FontAwesome
+            name="comments-o"
+            size={60}
+            color={"white"}
+            style={{ marginRight: 15 }}
+          />
+          <Text style={styles.welcome_text}>
+              幽语
+          </Text>
         </View>
-      </View>
-        <Text 
-          style={styles.link_text} 
-          onPress={() => {
-            navigation.navigate('register', {
-              setisLogin : route.params.setisLogin,
-            });
-          }}>
-          没账号？先注册！
-        </Text>
+        <View style={styles.logincard}>
+          <View style={styles.input}>
+            <View style={styles.inputbox}>
+              <TextInput 
+                style={styles.input_text}
+                textContentType='username'
+                placeholder="用户名"
+                onChangeText={username => onChangeUsername(username)}
+                defaultValue={username}
+                maxLength={255}
+              />
+            </View>
+            
+            <View style={styles.inputbox}>
+              <TextInput 
+                style={styles.input_text}
+                secureTextEntry={true}
+                placeholder="密码"
+                onChangeText={password => onChangePassword(password)}
+                defaultValue={password}
+                maxLength={32}
+              />
+            </View>
+            
+          </View>
+        </View>
+          <Text 
+            style={styles.link_text} 
+            onPress={() => {
+              navigation.navigate('register', {
+                setisLogin : route.params.setisLogin,
+              });
+            }}>
+            没账号？先注册！
+          </Text>
 
-        <FontAwesome
-          name="chevron-circle-right"
-          size={90}
-          color={"#6699FF"}
-          style={{ marginRight: 15, top:110, }}
-          onPress={() => HandleLogin(route.params.setisLogin, username, password)}
-        />
-      
-    </View>
+          <FontAwesome
+            name="chevron-circle-right"
+            size={90}
+            color={"#6699FF"}
+            style={{ marginRight: 15, top:110, }}
+            onPress={() => HandleLogin(route.params.setisLogin, username, password)}
+          />
+        
+      </View>
+    </ImageBackground>
+    
   );
 }
 
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:'#6699FF'
+    backgroundColor:'transparent',
   },
   inputbox: {
     padding:15,
@@ -134,9 +137,10 @@ const styles = StyleSheet.create({
     top:-220,
     height:70,
     alignItems:'center',
+    elevation:4,
   },
   logincard: {
-    top:250,
+    top:270,
     borderWidth: 0,
     position:'absolute',
     width:'100%',
@@ -145,6 +149,10 @@ const styles = StyleSheet.create({
     borderRadius:50,
     height:'100%',
     backgroundColor:'white',
+    shadowOffset: {width: 0, height: 4}, // 阴影偏移量
+    shadowRadius: 8, // 阴影模糊半径
+    shadowOpacity: 0.2, // 阴影不透明度
+    shadowColor: '#5c5c5c', // 设置阴影色
   },
   title: {
     flexDirection:'row',
@@ -179,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textDecorationLine: 'none',
     color: 'gray',
-    top:100,
+    top:120,
     marginLeft:180,
   },
   botton: {

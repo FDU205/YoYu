@@ -54,7 +54,7 @@ export default function WallAddModalScreen({ route, navigation }: Props<'walladd
         fontSize: 15,
         marginRight: 20,
       }}>
-          实名发表
+          {visibility?("实名"):("匿名")}发表
       </Text>
       <Switch 
         style={styles.switch} 

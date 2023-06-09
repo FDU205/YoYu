@@ -126,9 +126,9 @@ const styles = StyleSheet.create({
   button: {
     color: 'red',
     justifyContent: 'center',
-    marginLeft: '50%',
+    right: 30,
     marginTop: 10,
-
+    marginLeft:'auto',
     borderStyle: 'solid',
     borderColor: 'red',    
     borderWidth: 1,

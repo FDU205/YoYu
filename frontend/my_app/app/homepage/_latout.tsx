@@ -119,7 +119,7 @@ export default function HomePageLayout({ route, navigation } : Props<'homepage'>
           name="homeposts"
           component={HomePostsScreen}
           options={{
-            title: '我的帖子',
+            title: '我的问答',
             tabBarIcon: ({ color }) => <FontAwesome size={25} style={{ marginBottom: -3 }} name="file-text-o" color={color} />,
           }} 
         />

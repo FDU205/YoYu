@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
         shadowColor: '#5c5c5c', // 设置阴影色
         padding:10,
         height:200,
+        elevation:4,
     },
     input: {
         alignItems:'flex-start',

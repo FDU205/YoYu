@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6, // 阴影模糊半径
     shadowOpacity: 0.5, // 阴影不透明度
     shadowColor: '#5c5c5c', // 设置阴影色
+    elevation:6,
   },
   textStyle: {
     color: "white",

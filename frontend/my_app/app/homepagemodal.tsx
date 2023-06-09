@@ -3,7 +3,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { Icon } from '../components/FontAwesomeIcon';
 import { Text, View } from '../components/Themed';
 import { StyleSheet } from 'react-native';
-import TabWallScreen from './homepage/wall';
+import HomePostScreen from './homepage/wall';
 import { storage } from '../components/Storage';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'expo-router';
@@ -11,6 +11,7 @@ import { Props } from '../constants/NavigationType';
 import g from './globaldata';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { deleteData, getData, postData } from '../components/Api';
+import HomeBoxesScreen from './homepage/homeboxes';
 
 // 关注
 const Follow = (userid: number) => {
@@ -87,12 +88,13 @@ export default function HomePageLayout({ route, navigation } : Props<'homepagemo
       </View>
       <Tabs.Navigator>
         <Tabs.Screen
-          name="wall1"
-          component={TabWallScreen}
+          name="homeboxes"
+          component={HomeBoxesScreen}
           options={{
             title: ismine?'我的提问箱':'ta的提问箱',
             tabBarIcon: ({ color }) => <FontAwesome size={25} style={{ marginBottom: -3 }} name="dropbox" color={color} />,
           }}
+          initialParams={{owner_id:route.params.userid}}
         />
       </Tabs.Navigator>
     </View>
