@@ -472,7 +472,7 @@ func TestDelete(t *testing.T) {
 		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
 	}
 
-	// 提问, 查看问题，删除问题
+	// 外键约束删除
 	for i, testData := range DeleteRequestTests {
 		bodyData := testData.bodyData
 		req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))

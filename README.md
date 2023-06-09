@@ -1,7 +1,6 @@
-# ![幽语YOYU App](logo.png)
+# ![幽语YOYU App](./logo.png)
 
-# [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FDU205/YoYu/blob/main/LICENSE)
-[![GoDoc](https://godoc.org/github.com/gothinkster/golang-gin-realworld-example-app?status.svg)](https://godoc.org/github.com/gothinkster/golang-gin-realworld-example-app)
+# [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FDU205/YoYu/blob/main/LICENSE) [![GoDoc](https://godoc.org/github.com/gothinkster/golang-gin-realworld-example-app?status.svg)](https://godoc.org/github.com/gothinkster/golang-gin-realworld-example-app)
 
 # 后端快速启动（仅介绍Linux下的使用，其他系统下请自行探索）
 
@@ -51,11 +50,11 @@ https://golang.org/doc/install
 
 在[main.go](./backend/main.go)的最后一行修改你需要的ip和port
 
-到目录[backend](./backend)下使用 `go run main.go`命令运行
+进入目录[backend](./backend)下
 
-或 使用 `go build`编译出二进制文件然后进入[release](./backend/release)执行
+使用 `go run main.go`命令运行
 
-tips: 在backend目录下使用`go test`命令可以执行所有的单元测试
+或 使用 `go build`编译出二进制文件然后使用`./backend`命令执行
 
 ## 更多
 
