@@ -3,16 +3,13 @@ package messagebox
 import (
 	"YOYU/backend/database"
 	"YOYU/backend/users"
-
-	"gorm.io/gorm"
 )
 
 type MessageBox struct {
-	gorm.Model `json:"-"`
-	ID         uint       `gorm:"primary_key" json:"id"`
-	User       users.User `gorm:"ForeignKey:OwnerID" json:"-"`
-	OwnerID    uint       `gorm:"column:owner_id; not null" json:"owner_id"`
-	Title      string     `gorm:"column:title; not null" json:"title"`
+	ID      uint       `gorm:"primary_key" json:"id"`
+	User    users.User `gorm:"ForeignKey:OwnerID" json:"-"`
+	OwnerID uint       `gorm:"column:owner_id; not null" json:"owner_id"`
+	Title   string     `gorm:"column:title; not null" json:"title"`
 }
 
 // 创建提问箱
@@ -44,7 +41,7 @@ func SearchMessageBox(title string, ownerID uint, offset int, limit int) ([]Mess
 		query = query.Where("message_boxes.owner_id = ?", ownerID)
 	}
 
-	err := query.Joins("User").Order("updated_at desc").Limit(limit).Offset(offset).Find(&messageBox).Error
+	err := query.Joins("User").Order("id desc").Limit(limit).Offset(offset).Find(&messageBox).Error
 	return messageBox, err
 }
 

@@ -225,6 +225,89 @@ var ChannelRequestTests = []struct {
 	},
 }
 
+var DeleteRequestTests = []struct {
+	init           func(*http.Request)
+	url            string
+	method         string
+	bodyData       string
+	expectedCode   int
+	responseRegexg string
+	msg            string
+}{
+	{
+		func(req *http.Request) {},
+		"/api/post",
+		"POST",
+		`{"message_box_id": 1,"content":"1", "visibility": 1}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":1,"poster_id":2,"message_box_id":1,"content":"1","visibility":1},"err_msg":null}`,
+		"提问",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBox/1",
+		"DELETE",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":null,"err_msg":null}`,
+		"删除提问箱",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/post/1",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":1,"data":null,"err_msg":"record not found"}`,
+		"查帖子1",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/messageBox",
+		"POST",
+		`{"title": "test1"}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":2,"owner_id":1,"title":"test1"},"err_msg":null}`,
+		"创建提问箱",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/post",
+		"POST",
+		`{"message_box_id": 2,"content":"2", "visibility": 2}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":2,"poster_id":2,"message_box_id":2,"content":"2","visibility":2},"err_msg":null}`,
+		"提问",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/post/channel",
+		"POST",
+		`{"post_id": 2, "content": "追问", "type": 1}`,
+		http.StatusOK,
+		`{"code":0,"data":{"id":1,"post_id":2,"content":"追问","type":1},"err_msg":null}`,
+		"追问",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/post/2",
+		"DELETE",
+		`{}`,
+		http.StatusOK,
+		`{"code":0,"data":null,"err_msg":null}`,
+		"删除帖子2",
+	},
+	{
+		func(req *http.Request) {},
+		"/api/post/2",
+		"GET",
+		`{}`,
+		http.StatusOK,
+		`{"code":1,"data":null,"err_msg":"record not found"}`,
+		"查帖子2",
+	},
+}
+
 func ResetDB(db *gorm.DB) {
 	db.Exec("drop table if exists channels")
 	db.Exec("drop table if exists posts")
@@ -321,6 +404,84 @@ func TestPosts(t *testing.T) {
 		req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", "BEARER "+token[i%2])
+		asserts.NoError(err)
+
+		testData.init(req)
+
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
+		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
+	}
+}
+
+func TestDelete(t *testing.T) {
+	asserts := assert.New(t)
+
+	// 初始化数据库
+	test_db := database.TestInit()
+	ResetDB(test_db)
+	test_db = database.TestInit()
+	AutoMigrate(test_db)
+
+	r := gin.New()
+	v1 := r.Group("/api")
+	// 用户模块
+	userG := v1.Group("/user")
+	userG.Use(middlewares.AuthMiddleware(false))
+	users.UsersRegister(userG)
+
+	// 提问箱模块
+	v1.Use(middlewares.AuthMiddleware(true))
+	messagebox.MessageBoxRegister(v1)
+
+	// 帖子模块
+	v1.Use(middlewares.AuthMiddleware(true))
+	PostRegister(v1)
+
+	// 注册
+	var token []string
+	for _, testData := range RegisterRequestTests {
+		bodyData := testData.bodyData
+		req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))
+		req.Header.Set("Content-Type", "application/json")
+		asserts.NoError(err)
+
+		testData.init(req)
+
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
+		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
+		token = append(token, w.Body.String()[52:172])
+	}
+
+	// 创建提问箱
+	for _, testData := range MessageRequestTests {
+		bodyData := testData.bodyData
+		req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", "BEARER "+token[0])
+		asserts.NoError(err)
+
+		testData.init(req)
+
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		asserts.Equal(testData.expectedCode, w.Code, "Response Status - "+testData.msg)
+		asserts.Regexp(testData.responseRegexg, w.Body.String(), "Response Content - "+testData.msg)
+	}
+
+	// 提问, 查看问题，删除问题
+	for i, testData := range DeleteRequestTests {
+		bodyData := testData.bodyData
+		req, err := http.NewRequest(testData.method, testData.url, bytes.NewBufferString(bodyData))
+		req.Header.Set("Content-Type", "application/json")
+		if i == 1 || i == 3 {
+			req.Header.Set("Authorization", "BEARER "+token[0])
+		} else {
+			req.Header.Set("Authorization", "BEARER "+token[1])
+		}
 		asserts.NoError(err)
 
 		testData.init(req)

@@ -10,7 +10,7 @@ type Post struct {
 	ID           uint                  `gorm:"primary_key" json:"id"`
 	User         users.User            `gorm:"ForeignKey:PosterID" json:"-"`
 	PosterID     uint                  `gorm:"column:poster_id; not null" json:"poster_id"`
-	MessageBox   messagebox.MessageBox `gorm:"ForeignKey:MessageBoxID" json:"-"`
+	MessageBox   messagebox.MessageBox `gorm:"ForeignKey:MessageBoxID; constraint:OnDelete:CASCADE" json:"-"`
 	MessageBoxID uint                  `gorm:"column:message_box_id; not null" json:"message_box_id"`
 	Content      string                `gorm:"column:content; not null" json:"content"`
 	Visibility   uint                  `gorm:"column:visibility; not null" json:"visibility"`
@@ -18,7 +18,7 @@ type Post struct {
 
 type Channel struct {
 	ID      uint   `gorm:"primary_key" json:"id"`
-	Post    Post   `gorm:"ForeignKey:PostID" json:"-"`
+	Post    Post   `gorm:"ForeignKey:PostID; constraint:OnDelete:CASCADE" json:"-"`
 	PostID  uint   `gorm:"column:post_id; not null" json:"post_id"`
 	Content string `gorm:"column:content; not null" json:"content"`
 	Type    uint   `gorm:"column:type; not null" json:"type"`
