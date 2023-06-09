@@ -1,0 +1,39 @@
+接口：
+用户登录 
+	返回值 data多一个token:string类型
+
+用户注册 
+	返回值 data多一个token:string类型
+
+除了用户登录和用户注册 其他接口 请求参数均增加 Header:Authorization
+
+获取提问箱信息 
+	请求参数 id改为integer类型
+	返回值 id, owner_id, posts[]均改为integer类型
+
+修改提问箱信息
+	请求参数 id改为integer类型
+
+删除提问箱
+	请求参数 id改为integer类型
+
+创建帖子
+	请求参数 message_box_id， visibility改为integer类型
+
+查询所有帖子 
+	请求参数 message_box_id改为integer类型
+	返回值 id, poster_id, visibility均改为integer类型
+
+获取帖子信息 
+	请求参数 id改为integer类型
+	返回值 id, poster_id, visibility均改为integer类型
+
+删除帖子
+	请求参数 id改为integer类型
+
+获取今日表白墙 
+	返回值 id, poster_id, visibility均改为integer类型
+
+
+数据结构：
+所有的id全部更改为integer类型，所有与之绑定的接口的返回值均更改
