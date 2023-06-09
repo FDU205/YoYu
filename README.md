@@ -1,6 +1,38 @@
-# ![幽语YOYU App](./logo.png)
+# 幽语YOYU<img src="./logo.png" width="5%">
 
-# [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FDU205/YoYu/blob/main/LICENSE) [![GoDoc](https://godoc.org/github.com/gothinkster/golang-gin-realworld-example-app?status.svg)](https://godoc.org/github.com/gothinkster/golang-gin-realworld-example-app)
+
+# [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/FDU205/YoYu/blob/main/LICENSE) 
+
+# 前端快速启动
+
+## 1、安装Node.js
+
+首先安装[Node.js](https://nodejs.org/en/)，点击链接去官网下载或使用系统自带的包管理工具安装
+
+```bash
+ubuntu: apt install nodejs
+arch linux: pacman -S nodejs
+...
+```
+
+安装完毕后使用`node -v`命令查看版本，如有输出则说明安装正确
+
+## 2、安装yarn
+
+使用`npm install -g yarn`命令安装yarn
+
+安装完毕后使用`yarn -v`命令查看版本，如有输出则说明安装正确
+
+## 3、安装依赖
+
+进入目录[my_app](./frontend/my_app/)下
+
+使用`yarn install`命令安装依赖
+
+## 4、运行
+
+使用`expo start`命令运行 <br>
+手机上安装[Expo](https://expo.io/)，扫描二维码即可运行
 
 # 后端快速启动（仅介绍Linux下的使用，其他系统下请自行探索）
 
